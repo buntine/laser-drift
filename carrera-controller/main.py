@@ -1,14 +1,11 @@
 import lirc
 from time import sleep
 
-with lirc.CommandConnection() as conn:
-    msg = conn.readline()
-    print(msg)
+with lirc.CommandConnection(socket_path="/usr/local/var/run/lirc/lircd") as conn:
+    while True:
+        msg = conn.readline()
 
-    sleep(0.013)
+        sleep(0.013)
 
-    resp = lirc.StartRepeatCommand(conn, "carreratower2", "KEY_2").run()
-    if resp.success:
-        print(resp.data)
-    else:
+        resp = lirc.SendCommand(conn, "carreratower2", "K").run()
         print(resp.data)
