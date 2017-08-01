@@ -8,11 +8,12 @@ with lirc.CommandConnection(socket_path="/usr/local/var/run/lirc/lircd") as conn
         print(i)
         i+=1
 
-        resp = lirc.SendCommand(conn, "carreratower2", "K").run()
+        sleep(0.010)
+
+        resp = lirc.SendCommand(conn, "carreratower2", ["AA"]).run()
         print(resp.data)
 
-        sleep(0.001)
+        sleep(0.010)
+
         resp = lirc.SendCommand(conn, "carreratower2", "L").run()
         print(resp.data)
-
-
