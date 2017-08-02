@@ -1,19 +1,13 @@
-import lirc
-from time import sleep
+from multiprocessing import Queue
+from processes import server, race
 
-i = 0
-with lirc.CommandConnection(socket_path="/usr/local/var/run/lirc/lircd") as conn:
-    while True:
-        msg = conn.readline()
-        print(i)
-        i+=1
+if __name__ == "__main__":
+    q = Queue()
 
-        sleep(0.010)
+    s = server.Server(q)
+    r = race.Race(q)
 
-        resp = lirc.SendCommand(conn, "carreratower2", ["AA"]).run()
-        print(resp.data)
+    s.start()
+    r.start()
 
-        sleep(0.010)
-
-        resp = lirc.SendCommand(conn, "carreratower2", "L").run()
-        print(resp.data)
+    r.join()
