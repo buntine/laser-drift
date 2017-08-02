@@ -45,7 +45,7 @@ class Race(Process):
 
         if re.match(r"start|stop", action):
             self.active = (action == "start")
-        elif re.match(r"action|lanechange", action):
+        elif re.match(r"speed|lanechange", action):
             data = msg["data"]
             value = data["value"]
             p = self.players.get(data["player"])
