@@ -16,7 +16,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
             match = re.match(o, operation)
 
             if match:
-                message = f(match.groupdict())
+                message = f(operation, match.groupdict())
 
                 self.server.q.put(message)
                 self.request.sendall(b"OK")
@@ -24,27 +24,29 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
         self.request.sendall(b"Invalid operation")
 
-    def __start(self, _):
+    def __start(self, r, v):
         return {"message": "start", "data": {}}
 
-    def __stop(self, _):
+    def __stop(self, r, v):
         return {"message": "stop", "data": {}}
 
-    def __speed(self, values):
+    def __speed(self, raw, values):
         return {
             "message": "speed",
             "data": {
                 "player": int(values["player"]),
-                "speed": int(values["speed"])
+                "speed": int(values["speed"]),
+                "raw": raw
             }
         }
 
-    def __lane_change(self, values):
+    def __lane_change(self, raw, values):
         return {
             "message": "lane_change",
             "data": {
                 "player": int(values["player"]),
-                "enabled": values["status"] == "1"
+                "enabled": values["status"] == "1",
+                "raw": raw
             }
         }
 
