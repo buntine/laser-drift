@@ -6,10 +6,10 @@ class TCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         operation = str(self.request.recv(8).strip(), "utf-8")
         operations = {
-            "start": self.__start,
-            "stop": self.__stop,
-            "p\ds\d{1,2}": self.__speed,
-            "p\dl\d": self.__lane_change
+            r"start": self.__start,
+            r"stop": self.__stop,
+            r"p\ds\d{1,2}": self.__speed,
+            r"p\dl\d": self.__lane_change
         }
 
         for o, f in operations.items():
@@ -28,12 +28,15 @@ class TCPHandler(socketserver.BaseRequestHandler):
     def __stop(self, _):
         return {"message": "stop", "data": {}}
 
-    def __speed(self, _):
+    def __speed(self, msg):
+        match = re.match(r"p(?P<player>\d)s(?P<speed>\d{1,2})", msg)
+        values = match.groupdict()
+
         return {
             "message": "speed",
             "data": {
-                "player": 1,
-                "speed": 6
+                "player": values["player"],
+                "speed": values["speed"]
             }
         }
 
