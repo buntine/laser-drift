@@ -5,7 +5,7 @@ if __name__ == "__main__":
     q = Queue()
 
     s = server.Server(q, port=9999)
-    r = race.Race(q, remote="carrera", socket="/usr/local/var/run/lirc/lircd")
+    r = race.Race(q, players=[1,3], remote="carrera", socket="/usr/local/var/run/lirc/lircd")
 
     s.start()
     r.start()
