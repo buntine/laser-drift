@@ -1,4 +1,6 @@
 - Robustness (rescue exceptions, fail gracefully, etc)
 - Logging actions
 - Race players (setting speed, lane change, etc)
-- Generate lircd.conf file with all keys for 6 players
+**- Generate lircd.conf file with all keys for 6 players
+- Documentation / README
+- Comments at top of script(s), etc.

@@ -3,22 +3,24 @@ from multiprocessing import Process
 import lirc
 
 class Race(Process):
-    def __init__(self, q):
+    def __init__(self, q, remote="", socket="/var/run/lirc/lircd"):
         Process.__init__(self)
         self.q = q
+        self.remote = remote
+        self.socket = socket
         self.active = False
 
     def run(self):
-        with lirc.CommandConnection(socket_path="/usr/local/var/run/lirc/lircd") as conn:
+        with lirc.CommandConnection(socket_path=self.socket) as conn:
             while True:
                 if self.active:
                     msg = conn.readline()
 
                     sleep(0.009)
-                    resp = lirc.SendCommand(conn, "carrera", ["P3S10L1"]).run()
+                    resp = lirc.SendCommand(conn, self.remote, ["P3S10L1"]).run()
 
                     sleep(0.009)
-                    resp = lirc.SendCommand(conn, "carrera", ["P1S6L0"]).run()
+                    resp = lirc.SendCommand(conn, self.remote, ["P1S6L0"]).run()
 
                 while not self.q.empty():
                     self.handle_message(self.q.get(False))
