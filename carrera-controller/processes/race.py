@@ -1,6 +1,7 @@
 from time import sleep
 from multiprocessing import Process
 import lirc
+import re
 
 class Player:
     def __init__(self, nth: int):
@@ -42,20 +43,16 @@ class Race(Process):
     def handle_message(self, msg):
         action = msg["message"]
 
-        if action == "start":
-            self.active = True
-        elif action == "stop":
-            self.active = False
-        elif action == "speed" or action == "lanechange":
+        if re.match(r"start|stop", action):
+            self.active = (action == "start")
+        elif re.match(r"action|lanechange", action):
             data = msg["data"]
             value = data["value"]
             p = self.players.get(data["player"])
 
             if p:
-                if action == "speed":
-                    p.setspeed(value)
-                else:
-                    p.setlanechange(value)
+                f = p.setspeed if action == "speed" else p.setlanechange
+                f(value)
             else:
                 pass # Error.
         else:
