@@ -6,28 +6,27 @@ class Race(Process):
     def __init__(self, q):
         Process.__init__(self)
         self.q = q
-        self.data = "Hello"
+        self.active = False
 
     def run(self):
-        while True:
-            while not self.q.empty():
-                self.data = self.q.get(False)
+        with lirc.CommandConnection(socket_path="/usr/local/var/run/lirc/lircd") as conn:
+            while True:
+                if self.active:
+                    msg = conn.readline()
 
-            print(self.data)
-            sleep(0.2)
-#i = 0
-#with lirc.CommandConnection(socket_path="/usr/local/var/run/lirc/lircd") as conn:
-#    while True:
-#        msg = conn.readline()
-#        print(i)
-#        i+=1
-#
-#        sleep(0.010)
-#
-#        resp = lirc.SendCommand(conn, "carreratower2", ["AA"]).run()
-#        print(resp.data)
-#
-#        sleep(0.010)
-#
-#        resp = lirc.SendCommand(conn, "carreratower2", "L").run()
-#        print(resp.data)
+                    sleep(0.010)
+                    resp = lirc.SendCommand(conn, "carreratower2", ["AA"]).run()
+
+                    sleep(0.010)
+                    resp = lirc.SendCommand(conn, "carreratower2", "L").run()
+
+                while not self.q.empty():
+                    self.handle_message(self.q.get(False))
+
+    def handle_message(self, msg):
+        action = msg["message"]
+
+        if action == "start":
+            self.active = True
+        elif action == "stop":
+            self.active = False
