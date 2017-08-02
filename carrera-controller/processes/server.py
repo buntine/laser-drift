@@ -35,8 +35,8 @@ class TCPHandler(socketserver.BaseRequestHandler):
         return {
             "message": "speed",
             "data": {
-                "player": values["player"],
-                "speed": values["speed"]
+                "player": int(values["player"]),
+                "speed": int(values["speed"])
             }
         }
 
