@@ -4,7 +4,7 @@ from multiprocessing import Process
 
 class TCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
-        operation = self.request.recv(8).strip()
+        operation = str(self.request.recv(8).strip(), "utf-8")
         operations = {
             "start": self.__start,
             "stop": self.__stop,
@@ -17,10 +17,10 @@ class TCPHandler(socketserver.BaseRequestHandler):
                 message = f(operation)
 
                 self.server.q.put(message)
-                self.request.sendall("OK")
+                self.request.sendall(b"OK")
                 return
 
-        self.request.sendall("Invalid operation")
+        self.request.sendall(b"Invalid operation")
 
     def __start(self, _):
         return {"message": "start", "data": {}}
