@@ -9,7 +9,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
             r"start": self.__start,
             r"stop": self.__stop,
             r"p(?P<player>\d)s(?P<speed>\d{1,2})": self.__speed,
-            r"p(?P<player>\d)l(?P<status>\d)": self.__lane_change
+            r"p(?P<player>\d)l(?P<status>\d)": self.__lanechange
         }
 
         for o, f in operations.items():
@@ -35,17 +35,17 @@ class TCPHandler(socketserver.BaseRequestHandler):
             "message": "speed",
             "data": {
                 "player": int(values["player"]),
-                "speed": int(values["speed"]),
+                "value": int(values["speed"]),
                 "raw": raw
             }
         }
 
-    def __lane_change(self, raw, values):
+    def __lanechange(self, raw, values):
         return {
-            "message": "lane_change",
+            "message": "lanechange",
             "data": {
                 "player": int(values["player"]),
-                "enabled": values["status"] == "1",
+                "value": values["status"] == "1",
                 "raw": raw
             }
         }

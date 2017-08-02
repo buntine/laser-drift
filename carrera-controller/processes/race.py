@@ -6,16 +6,16 @@ class Player:
     def __init__(self, nth: int):
         self.nth = nth
         self.speed = 0
-        self.lane_change = False
+        self.lanechange = False
 
     def setspeed(s: int):
         self.speed = s
 
     def setlanechange(lc: bool):
-        self.lane_change = lc
+        self.lanechange = lc
 
     def key():
-        return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lane_change else 0)
+        return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lanechange else 0)
 
 class Race(Process):
     def __init__(self, q, players=[], remote="", socket="/var/run/lirc/lircd"):
@@ -46,6 +46,18 @@ class Race(Process):
             self.active = True
         elif action == "stop":
             self.active = False
+        elif action == "speed" or action == "lanechange":
+            data = msg["data"]
+            value = data["value"]
+            p = self.players[data["player"]]
+
+            if aciton == "speed":
+                p.setspeed(data["speed"])
+            else:
+                p.setlanechange(data["lanechange"])
+        else:
+            pass
+            # Error.
 
     def __make_players(self, players):
         p = players.copy()
