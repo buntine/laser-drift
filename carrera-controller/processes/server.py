@@ -8,13 +8,15 @@ class TCPHandler(socketserver.BaseRequestHandler):
         operations = {
             r"start": self.__start,
             r"stop": self.__stop,
-            r"p\ds\d{1,2}": self.__speed,
-            r"p\dl\d": self.__lane_change
+            r"p(?P<player>\d)s(?P<speed>\d{1,2})": self.__speed,
+            r"p(?P<player>\d)l(?P<status>\d)": self.__lane_change
         }
 
         for o, f in operations.items():
-            if re.match(o, operation):
-                message = f(operation)
+            match = re.match(o, operation)
+
+            if match:
+                message = f(match.groupdict())
 
                 self.server.q.put(message)
                 self.request.sendall(b"OK")
@@ -28,10 +30,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
     def __stop(self, _):
         return {"message": "stop", "data": {}}
 
-    def __speed(self, msg):
-        match = re.match(r"p(?P<player>\d)s(?P<speed>\d{1,2})", msg)
-        values = match.groupdict()
-
+    def __speed(self, values):
         return {
             "message": "speed",
             "data": {
@@ -40,12 +39,12 @@ class TCPHandler(socketserver.BaseRequestHandler):
             }
         }
 
-    def __lane_change(self, _):
+    def __lane_change(self, values):
         return {
             "message": "lane_change",
             "data": {
-                "player": 1,
-                "enabled": False
+                "player": int(values["player"]),
+                "enabled": values["status"] == "1"
             }
         }
 
