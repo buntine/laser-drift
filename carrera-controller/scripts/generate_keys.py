@@ -7,7 +7,7 @@ def to_action(b):
               "lane_change": False}
     ds = [int(d) for d in b]
 
-    action["player"] = ((ds[0] * 2) + ds[1] + (ds[7] * 2))
+    action["player"] = ((ds[0] * 2) + ds[1] + (ds[7] * 4))
     action["speed"] = ((ds[2] * (2**3)) + (ds[3] * (2**2)) + (ds[4] * 2) + ds[5])
     action["lane_change"] = ds[6] == 1
 
@@ -41,8 +41,11 @@ for n in key_range:
     b = "{0:b}".format(n).zfill(8)
     action = to_action(b)
     key = to_key(action)
+    pulses = to_pulses(b)
 
-    keys.append([key, to_pulses(b)])
+    # Ignore keys that end in a space (may cause issues later).
+    if len(pulses) % 2 == 1:
+        keys.append([key, pulses])
 
 conf = """
 begin remote

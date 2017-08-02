@@ -14,11 +14,11 @@ class Race(Process):
                 if self.active:
                     msg = conn.readline()
 
-                    sleep(0.010)
-                    resp = lirc.SendCommand(conn, "carreratower2", ["AA"]).run()
+                    sleep(0.009)
+                    resp = lirc.SendCommand(conn, "carrera", ["P3S10L1"]).run()
 
-                    sleep(0.010)
-                    resp = lirc.SendCommand(conn, "carreratower2", "L").run()
+                    sleep(0.009)
+                    resp = lirc.SendCommand(conn, "carrera", ["P1S6L0"]).run()
 
                 while not self.q.empty():
                     self.handle_message(self.q.get(False))
