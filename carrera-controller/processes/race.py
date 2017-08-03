@@ -28,7 +28,7 @@ class Race(Process):
         self.players = self.__make_players(players)
 
     def run(self):
-        sync = "%s SYNC" % self.remote
+        sync = "SYNC %s" % self.remote
 
         with lirc.CommandConnection(socket_path=self.socket) as conn:
             while True:

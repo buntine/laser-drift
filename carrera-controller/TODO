@@ -8,3 +8,7 @@
 - Comments at top of script(s), etc.
 - Type signatures for all functions.
 - Deal with Lirc crashing or send command getting "broken pipe" error
+
+echo "p1s7" > /dev/tcp/localhost/9999
+LD_LIBRARY_PATH="/usr/local/lib" python main.py
+sudo lircd --nodaemon
