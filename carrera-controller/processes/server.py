@@ -52,7 +52,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
         }
 
 class Server(Process):
-    def __init__(self, queue, port=8099, host="localhost"):
+    def __init__(self, queue, port: int, host: str):
         Process.__init__(self)
         self.q = queue
         self.port = port

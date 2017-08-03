@@ -23,7 +23,7 @@ class Player:
         return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lanechange else 0)
 
 class Race(Process):
-    def __init__(self, q, players=[], remote="", socket="/var/run/lirc/lircd"):
+    def __init__(self, q, players: [int], remote: str, socket: str):
         Process.__init__(self)
         self.q = q
         self.remote = remote

@@ -13,3 +13,6 @@ Useful:
   echo "p1s7" > /dev/tcp/localhost/9999
   LD_LIBRARY_PATH="/usr/local/lib" python main.py
   sudo lircd --nodaemon
+
+CLI:
+  --p1 --p2 --p3 --p4 --socket --port --host --remote
