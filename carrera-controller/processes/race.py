@@ -28,14 +28,17 @@ class Race(Process):
         self.players = self.__make_players(players)
 
     def run(self):
+        sync = "%s SYNC" % self.remote
+
         with lirc.CommandConnection(socket_path=self.socket) as conn:
             while True:
                 if self.active:
                     msg = conn.readline()
 
-                    for _, p in self.players.items():
-                        sleep(0.009)
-                        lirc.SendCommand(conn, self.remote, [p.key()]).run()
+                    if sync in msg:
+                        for _, p in self.players.items():
+                            sleep(0.009)
+                            lirc.SendCommand(conn, self.remote, [p.key()]).run()
 
                 while not self.q.empty():
                     self.handle_message(self.q.get(False))

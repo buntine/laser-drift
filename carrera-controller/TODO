@@ -1,3 +1,4 @@
+**- Respond to carrera:SYNC only (not any IR).
 - Robustness (rescue exceptions, fail gracefully, etc)
 - Logging actions
 **- Race players (setting speed, lane change, etc)
@@ -6,3 +7,4 @@
 - Documentation / README
 - Comments at top of script(s), etc.
 - Type signatures for all functions.
+- Deal with Lirc crashing or send command getting "broken pipe" error
