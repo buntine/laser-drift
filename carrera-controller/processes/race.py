@@ -1,5 +1,6 @@
 from time import sleep
 from multiprocessing import Process
+import logging
 import lirc
 import re
 
@@ -15,6 +16,9 @@ class Player:
     def setlanechange(self, lc: bool):
         self.lanechange = lc
 
+    def moving(self):
+        return self.speed > 0
+
     def key(self):
         return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lanechange else 0)
 
@@ -27,6 +31,8 @@ class Race(Process):
         self.active = False
         self.players = self.__make_players(players)
 
+        logging.info("Race process initialized")
+
     def run(self):
         sync = "SYNC %s" % self.remote
 
@@ -38,7 +44,9 @@ class Race(Process):
                     if sync in msg:
                         for _, p in self.players.items():
                             sleep(0.009)
-                            lirc.SendCommand(conn, self.remote, [p.key()]).run()
+
+                            if p.moving():
+                                lirc.SendCommand(conn, self.remote, [p.key()]).run()
 
                 while not self.q.empty():
                     self.handle_message(self.q.get(False))
