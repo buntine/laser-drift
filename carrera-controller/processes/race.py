@@ -49,13 +49,14 @@ class Race(Process):
                                 lirc.SendCommand(conn, self.remote, [p.key()]).run()
 
                 while not self.q.empty():
-                    self.handle_message(self.q.get(False))
+                    self.__handle_message(self.q.get(False))
 
-    def handle_message(self, msg):
+    def __handle_message(self, msg: str):
         action = msg["message"]
 
         if re.match(r"start|stop", action):
             self.active = (action == "start")
+            logging.info("Race state updated: %s" % action)
         elif re.match(r"speed|lanechange", action):
             data = msg["data"]
             value = data["value"]
@@ -64,12 +65,13 @@ class Race(Process):
             if p:
                 f = p.setspeed if action == "speed" else p.setlanechange
                 f(value)
+                logging.info("Player %d set %s to %s" % (p.nth, action, value))
             else:
-                pass # Error.
+                logging.warning("Cannot set %s for player %d" % (action, data["player"]))
         else:
-            pass # Error.
+            logging.warning("Unknown command: %s" % action)
 
-    def __make_players(self, players):
+    def __make_players(self, players: [Player]):
         p = players.copy()
         p.sort()
 

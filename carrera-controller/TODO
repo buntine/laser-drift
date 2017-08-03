@@ -1,12 +1,12 @@
 **- Respond to carrera:SYNC only (not any IR).
 - Robustness (rescue exceptions, fail gracefully, etc)
-- Logging actions
+**- Logging actions
 **- Race players (setting speed, lane change, etc)
 - main.py as a CLI that accepts arguments and spins up processes
 **- Generate lircd.conf file with all keys for 6 players
 - Documentation / README
 - Comments at top of script(s), etc.
-- Type signatures for all functions.
+**- Type signatures for all functions.
 - Deal with Lirc crashing or send command getting "broken pipe" error
 
 Useful:
