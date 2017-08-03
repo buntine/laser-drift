@@ -1,12 +1,12 @@
 import logging
 from multiprocessing import Queue
-from processes import server, race
+from .processes import server, race
 
 class Carrera:
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
     
-    def run(port=8099, host="localhost", socket="/var/run/lirc/lircd", remote="carrera", players=[0,1]):
+    def run(self, port=8099, host="localhost", socket="/var/run/lirc/lircd", remote="carrera", players=[0,1]):
         logging.info("Carrera Champs Racing System initialization")
 
         q = Queue()
