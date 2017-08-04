@@ -8,10 +8,22 @@ import sys
 host = sys.argv[1]
 port = int(sys.argv[2])
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def connect():
+    global sock
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host, port))
+
+def send(command):
+    sock.sendall(bytes(command, "utf-8"))
+    resp = sock.recv(256)
+
+    if len(resp) > 0:
+        print("> %s" % resp)
+
+    return resp
 
 try:
-    sock.connect((host, port))
+    connect()
 except:
     print("Cannot connect to %s:%d" % (host, port))
     sys.exit(1)
@@ -24,9 +36,11 @@ try:
         if command == "exit":
             break
 
-        sock.sendall(bytes(command, "utf-8"))
-        print("> %s" % sock.recv(256))
-        sock.connect((host, port))
+        resp = send(command)
+
+        if len(resp) == 0:
+            connect()
+            send(command)
 except:
     print("Connection lost.")
 finally:

@@ -8,9 +8,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
         """Parse and validate input. Transform it into valid command for
            the Race process and add it to the queue."""
 
-        command = self.request.recv(8).strip()
-        print(command)
-        command = str(command, "utf-8")
+        command = str(self.request.recv(8).strip(), "utf-8")
         commands = {
             r"start": self.__start,
             r"stop": self.__stop,
@@ -30,7 +28,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
                 return
 
         logging.warning("Unknown command: %s", command)
-        self.request.sendall(b"Invalid command")
+        self.request.sendall(b"ERR")
 
     def __start(self, v):
         return {"message": "start", "data": {}}
