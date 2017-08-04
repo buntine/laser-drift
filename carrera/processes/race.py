@@ -42,9 +42,8 @@ class Race(Process):
             while True:
                 if self.active and self.__find_sync(conn):
                     for _, p in self.players.items():
-                        sleep(0.009)
-
                         if p.moving():
+                            sleep(0.009)
                             lirc.SendCommand(conn, self.remote, [p.key()]).run()
 
                 # Apply state changes as per requests from TCP server.
