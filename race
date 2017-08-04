@@ -1,13 +1,14 @@
 #! /usr/bin/env python
 
+import sys
 from carrera import Carrera
 from optparse import OptionParser
 
-parser = OptionParser()
+parser = OptionParser(description="Starts a Carrera racing server with the given players.")
 
 parser.add_option("-s", "--socket", dest="socket", default="/var/run/lirc/lircd",
                   help="Location of the lircd socket [default: %default]", metavar="PATH")
-parser.add_option("-h", "--host", dest="host", default="localhost",
+parser.add_option("-H", "--host", dest="host", default="localhost",
                   help="Host name to run TCP server on [default: %default]" , metavar="HOST")
 parser.add_option("-p", "--port", dest="port", default=8099,
                   help="TCP port to listen on [default: %default]", metavar="PORT")
@@ -17,6 +18,26 @@ parser.add_option("-r", "--remote", dest="remote", default="carrera",
 parser.add_option("-l", "--logfile", dest="logfile", default=None,
                   help="The path to a file to log output to [default: STDOUT]",
                   metavar="PATH")
+parser.add_option("--p1", action="append_const", const=1, dest="players",
+                  help="Player #1 is active")
+parser.add_option("--p2", action="append_const", const=2, dest="players",
+                  help="Player #2 is active")
+parser.add_option("--p3", action="append_const", const=3, dest="players",
+                  help="Player #3 is active")
+parser.add_option("--p4", action="append_const", const=4, dest="players",
+                  help="Player #4 is active")
 
-c = Carrera()
-c.run(players=[1, 2], port=9999, socket="/usr/local/var/run/lirc/lircd")
+(opts, _) = parser.parse_args()
+
+if not opts.players:
+    print("Error: Atleast one player must be active.")
+    sys.exit(1)
+
+opts.players.sort()
+
+c = Carrera(opts.logfile)
+c.run(players=opts.players,
+      host=opts.host,
+      port=int(opts.port),
+      socket=opts.socket,
+      remote=opts.remote)

@@ -2,8 +2,8 @@
 - Why does red car suck so much?
 - Robustness (rescue exceptions, fail gracefully, etc)
 - Deal with Lirc crashing or send command getting "broken pipe" error
-- main.py as a CLI that accepts arguments and spins up processes
 - Documentation / README
+**- main.py as a CLI that accepts arguments and spins up processes
 **- Respond to carrera:SYNC only (not any IR).
 **- Logging actions
 **- Race players (setting speed, lane change, etc)
@@ -12,9 +12,6 @@
 **- Type signatures for all functions.
 
 Useful:
-  echo "p1s7" > /dev/tcp/localhost/9999
-  LD_LIBRARY_PATH="/usr/local/lib" ./run
+  LD_LIBRARY_PATH="/usr/local/lib" ./race --port=9999 --p1 --p2 --socket="/usr/local/var/run/lirc/lircd"
+  ./scripts/repl
   sudo lircd --nodaemon
-
-CLI:
-  --p1 --p2 --p3 --p4 --socket --port --host --remote --logfile

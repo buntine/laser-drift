@@ -3,8 +3,8 @@ from multiprocessing import Queue
 from .processes import server, race
 
 class Carrera:
-    def __init__(self):
-        logging.basicConfig(level=logging.INFO)
+    def __init__(self, logfile: str):
+        logging.basicConfig(filename=logfile, level=logging.INFO)
     
     def run(self, port=8099, host="localhost", socket="/var/run/lirc/lircd", remote="carrera", players=[0,1]):
         """Start processes and wait for them to return (if ever)"""
