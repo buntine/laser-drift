@@ -59,7 +59,6 @@ class Race(Process):
 
         return sync in msg
 
-                    if sync in msg:
     def __handle_message(self, msg: str):
         """Parse command and attempt to update state of game and/or player."""
         command = msg["message"]
