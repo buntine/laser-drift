@@ -7,6 +7,7 @@ class Carrera:
         logging.basicConfig(level=logging.INFO)
     
     def run(self, port=8099, host="localhost", socket="/var/run/lirc/lircd", remote="carrera", players=[0,1]):
+        """Start processes and wait for them to return (if ever)"""
         logging.info("Carrera Champs Racing System initialization")
 
         q = Queue()

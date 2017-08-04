@@ -23,6 +23,10 @@ class Player:
         return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lanechange else 0)
 
 class Race(Process):
+    """Executes the main game loop. Listens for syncing pulses from Carrera IR tower
+       and responds with each players details. Listens for commands from the TCP
+       server process."""
+
     def __init__(self, q, players: [int], remote: str, socket: str):
         Process.__init__(self)
         self.q = q
@@ -34,42 +38,48 @@ class Race(Process):
         logging.info("Race process initialized")
 
     def run(self):
-        sync = "SYNC %s" % self.remote
-
         with lirc.CommandConnection(socket_path=self.socket) as conn:
             while True:
-                if self.active:
-                    msg = conn.readline()
+                if self.active and self.__find_sync():
+                    for _, p in self.players.items():
+                        sleep(0.009)
 
-                    if sync in msg:
-                        for _, p in self.players.items():
-                            sleep(0.009)
+                        if p.moving():
+                            lirc.SendCommand(conn, self.remote, [p.key()]).run()
 
-                            if p.moving():
-                                lirc.SendCommand(conn, self.remote, [p.key()]).run()
-
+                # Apply state changes as per requests from TCP server.
                 while not self.q.empty():
                     self.__handle_message(self.q.get(False))
 
-    def __handle_message(self, msg: str):
-        action = msg["message"]
+    def __find_sync(conn: lird.AbstractConnection):
+        """Waits for a blast from the lirc process and returns true if it's
+           a syncing signal from the Carrera IR tower."""
+        sync = "SYNC %s" % self.remote
+        msg = conn.readline()
 
-        if re.match(r"start|stop", action):
-            self.active = (action == "start")
-            logging.info("Race state updated: %s" % action)
-        elif re.match(r"speed|lanechange", action):
+        return sync in msg
+
+                    if sync in msg:
+    def __handle_message(self, msg: str):
+        """Parse command and attempt to update state of game and/or player."""
+        command = msg["message"]
+
+        if re.match(r"start|stop", command):
+            self.active = (command == "start")
+            logging.info("Race state updated: %s" % command)
+        elif re.match(r"speed|lanechange", command):
             data = msg["data"]
             value = data["value"]
             p = self.players.get(data["player"])
 
             if p:
-                f = p.setspeed if action == "speed" else p.setlanechange
+                f = p.setspeed if command == "speed" else p.setlanechange
                 f(value)
-                logging.info("Player %d set %s to %s" % (p.nth, action, value))
+                logging.info("Player %d set %s to %s" % (p.nth, command, value))
             else:
-                logging.warning("Cannot set %s for player %d" % (action, data["player"]))
+                logging.warning("Cannot set %s for player %d" % (command, data["player"]))
         else:
-            logging.warning("Unknown command: %s" % action)
+            logging.warning("Unknown command: %s" % command)
 
     def __make_players(self, players: [Player]):
         p = players.copy()

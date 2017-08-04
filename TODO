@@ -5,14 +5,14 @@
 - main.py as a CLI that accepts arguments and spins up processes
 **- Generate lircd.conf file with all keys for 6 players
 - Documentation / README
-- Comments at top of script(s), etc.
+**- Comments at top of script(s), etc.
 **- Type signatures for all functions.
 - Deal with Lirc crashing or send command getting "broken pipe" error
 
 Useful:
   echo "p1s7" > /dev/tcp/localhost/9999
-  LD_LIBRARY_PATH="/usr/local/lib" python main.py
+  LD_LIBRARY_PATH="/usr/local/lib" ./run
   sudo lircd --nodaemon
 
 CLI:
-  --p1 --p2 --p3 --p4 --socket --port --host --remote
+  --p1 --p2 --p3 --p4 --socket --port --host --remote --logfile
