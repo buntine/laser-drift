@@ -40,7 +40,7 @@ class Race(Process):
     def run(self):
         with lirc.CommandConnection(socket_path=self.socket) as conn:
             while True:
-                if self.active and self.__find_sync():
+                if self.active and self.__find_sync(conn):
                     for _, p in self.players.items():
                         sleep(0.009)
 
@@ -51,7 +51,7 @@ class Race(Process):
                 while not self.q.empty():
                     self.__handle_message(self.q.get(False))
 
-    def __find_sync(conn: lird.AbstractConnection):
+    def __find_sync(self, conn: lirc.client.AbstractConnection):
         """Waits for a blast from the lirc process and returns true if it's
            a syncing signal from the Carrera IR tower."""
         sync = "SYNC %s" % self.remote

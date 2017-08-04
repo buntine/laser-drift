@@ -7,7 +7,10 @@ class TCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         """Parse and validate input. Transform it into valid command for
            the Race process and add it to the queue."""
-        command = str(self.request.recv(8).strip(), "utf-8")
+
+        command = self.request.recv(8).strip()
+        print(command)
+        command = str(command, "utf-8")
         commands = {
             r"start": self.__start,
             r"stop": self.__stop,
@@ -19,7 +22,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
             match = re.match(o, command)
 
             if match:
-                message = f(command, match.groupdict())
+                message = f(match.groupdict())
 
                 self.server.q.put(message)
                 self.request.sendall(b"OK")
@@ -63,6 +66,7 @@ class Server(Process):
     def run(self):
         """Starts a TCP server that listens for commands and funnels them
            safelty to the Race process for execution."""
+
         server = socketserver.TCPServer((self.host, self.port), TCPHandler)
         server.q = self.q
 
