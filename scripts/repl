@@ -2,15 +2,22 @@
 
 import socket
 import sys
+import signal
 
 """A simple REPL to send commands to a Carrera server."""
 
 host = sys.argv[1]
 port = int(sys.argv[2])
 
+def close():
+    sock.close()
+    print("Exiting...")
+    sys.exit()
+
 def connect():
     global sock
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.connect((host, port))
 
 def send(command):
@@ -44,6 +51,6 @@ try:
 except:
     print("Connection lost.")
 finally:
-    sock.close()
+    close()
 
-print("Exiting...")
+signal.signal(signal.SIGINT, close)

@@ -1,8 +1,10 @@
+- Free up port on exit (of repl)
 - Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
 - Why does red car suck so much?
 - Robustness (rescue exceptions, fail gracefully, etc)
 - Deal with Lirc crashing or send command getting "broken pipe" error
 - Documentation / README
+- Network tapping game
 **- main.py as a CLI that accepts arguments and spins up processes
 **- Respond to carrera:SYNC only (not any IR).
 **- Logging actions
