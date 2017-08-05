@@ -38,17 +38,20 @@ class Race(Process):
         logging.info("Race process initialized")
 
     def run(self):
-        with lirc.CommandConnection(socket_path=self.socket) as conn:
-            while True:
-                if self.active and self.__find_sync(conn):
-                    for _, p in self.players.items():
-                        if p.moving():
-                            sleep(0.009)
-                            lirc.SendCommand(conn, self.remote, [p.key()]).run()
+        try:
+            with lirc.CommandConnection(socket_path=self.socket) as conn:
+                while True:
+                    if self.active and self.__find_sync(conn):
+                        for _, p in self.players.items():
+                            if p.moving():
+                                sleep(0.009)
+                                lirc.SendCommand(conn, self.remote, [p.key()]).run()
 
-                # Apply state changes as per requests from TCP server.
-                while not self.q.empty():
-                    self.__handle_message(self.q.get(False))
+                    # Apply state changes as per requests from TCP server.
+                    while not self.q.empty():
+                        self.__handle_message(self.q.get(False))
+        except:
+            logging.error("Cannot connect to lirc with socket: %s" % self.socket)
 
     def __find_sync(self, conn: lirc.client.AbstractConnection):
         """Waits for a blast from the lirc process and returns true if it's
