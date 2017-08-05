@@ -57,9 +57,13 @@ class Race(Process):
         """Waits for a blast from the lirc process and returns true if it's
            a syncing signal from the Carrera IR tower."""
         sync = "SYNC %s" % self.remote
-        msg = conn.readline()
 
-        return sync in msg
+        try:
+            msg = conn.readline(1)
+            return sync in msg
+        except:
+            logging.warn("Did not receive SYNC from %s, skipping." % self.remote)
+            return False
 
     def __handle_message(self, msg: str):
         """Parse command and attempt to update state of game and/or player."""
