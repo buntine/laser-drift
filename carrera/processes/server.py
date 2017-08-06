@@ -70,4 +70,7 @@ class Server(Process):
 
         logging.info("TCP Server process initialized")
 
-        server.serve_forever()
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            logging.warn("Terminating Server")

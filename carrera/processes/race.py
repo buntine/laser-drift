@@ -50,9 +50,11 @@ class Race(Process):
                     # Apply state changes as per requests from TCP server.
                     while not self.q.empty():
                         self.__handle_message(self.q.get(False))
+        except KeyboardInterrupt:
+            logging.info("Terminating Race")
         except:
             logging.error("Cannot connect to lirc with socket: %s" % self.socket)
-
+        
     def __find_sync(self, conn: lirc.client.AbstractConnection):
         """Waits for a blast from the lirc process and returns true if it's
            a syncing signal from the Carrera IR tower."""

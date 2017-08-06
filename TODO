@@ -1,9 +1,10 @@
 - Free up port on exit (of repl)
+- Is 9ms correct? Should use sched library?
 - Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
-- Why does red car suck so much?
-- Deal with Lirc crashing or send command getting "broken pipe" error
+- Deal with Lirc crashing or send command getting "broken pipe" error (possible?)
 - Documentation / README
 - Network tapping game
+**- Each process to handle signal. (Kinda dank, but handling SIGINT)
 **- Robustness (rescue exceptions, fail gracefully, etc)
 **- main.py as a CLI that accepts arguments and spins up processes
 **- Respond to carrera:SYNC only (not any IR).
@@ -12,6 +13,7 @@
 **- Generate lircd.conf file with all keys for 6 players
 **- Comments at top of script(s), etc.
 **- Type signatures for all functions.
+**- Why does red car suck so much? (Answer: Fucking braking!)
 
 Useful:
   LD_LIBRARY_PATH="/usr/local/lib" ./race --port=9999 --p1 --p2 --socket="/usr/local/var/run/lirc/lircd"

@@ -18,8 +18,8 @@ class Carrera:
         self.r.start()
         self.r.join()
 
-    def terminate(self, n, _):
+    def terminate(self):
         """Should be called by implementing program upon receiving OS signal."""
-        logging.warn("Terminating. Signal: %d" % n)
+        logging.warn("Laser Drift is terminating.")
         self.s.terminate()
         self.r.terminate()

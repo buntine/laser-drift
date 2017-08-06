@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 import sys
-import signal
 from carrera import Carrera
 from optparse import OptionParser
 
@@ -37,10 +36,12 @@ if not opts.players:
 opts.players.sort()
 
 c = Carrera(opts.logfile)
-c.run(players=opts.players,
-      host=opts.host,
-      port=int(opts.port),
-      socket=opts.socket,
-      remote=opts.remote)
 
-signal.signal(signal.SIGINT, c.terminate)
+try:
+    c.run(players=opts.players,
+          host=opts.host,
+          port=int(opts.port),
+          socket=opts.socket,
+          remote=opts.remote)
+except KeyboardInterrupt:
+    c.terminate()
