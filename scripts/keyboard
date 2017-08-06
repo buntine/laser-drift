@@ -15,8 +15,10 @@ const SPEED_KEYS = ['0', '1', '2', '3', '4', '5', '6', '7',
 var args = process.argv.slice(2);
 
 if (args.length < 1) {
-  console.log('Expected player number, [host] and [port].');
+  console.log('Usage: keyboard player [host] [port]');
   process.exit(1);
+} else {
+  console.log("Control your player with your keyboard.\n\nSPACE    Start/Stop\n(1 - f)  Speed\nl        Lane change toggle\n")
 }
 
 const state = {
