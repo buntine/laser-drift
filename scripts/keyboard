@@ -1,0 +1,47 @@
+#! /usr/bin/env node
+
+var net = require('net');
+var stdin = process.stdin;
+
+stdin.setRawMode(true);
+stdin.resume();
+stdin.setEncoding('utf8');
+
+var client = new net.Socket();
+
+const SPEED_KEYS = ['0', '1', '2', '3', '4', '5', '6', '7',
+                    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+const state = {
+  started: false,
+  lanechange: false
+};
+
+function send(command) {
+  client.connect(9999, '10.1.1.218', function(){
+    client.write(command);
+    console.log("Sent:", command);
+    client.destroy();
+  });
+}
+
+stdin.on('data', function(key){
+  if (key === '\u0003') {
+    process.exit();
+  }
+
+  if (key === ' ') {
+    state.started = !state.started;
+    send(state.started ? 'start' : 'stop')
+  }
+
+  if (key === 'l') {
+    state.laneChange = !state.laneChange;
+    send(state.laneChange ? 'p1l0' : 'p1l1')
+  }
+
+  sk = SPEED_KEYS.indexOf(key);
+
+  if (sk > -1) {
+    send('p1s' + sk);
+  }
+});
