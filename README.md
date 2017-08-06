@@ -12,7 +12,7 @@ This system acts as a low level interface into a Carrera Digital slot car set an
 
 The main Laser Drift system is comprised of two processes:
 
-  - A game loop that maintains each players state, listens for syncing pulses from the IR tower, and encodes each players data into a data packet the control unit expects.
+  - A game loop that maintains each players state, listens for syncing pulses from the IR tower, and encodes each players data into a data packet the control unit expects. The game loop also consumes commands from the TCP server every ~60ms.
   - A TCP server that accepts commands from the outside world and translates them into a data structures the game loop understands. Those data packets are then added to a queue for consumption by the game loop.
 
 A server and game loop can be spun up using the `race` program. In this case we are starting a server on port 8099 that will send data packets for players 1 and 2:
@@ -22,6 +22,23 @@ A server and game loop can be spun up using the `race` program. In this case we 
 ```
 
 A full set of options can be seen by passing the help flag: ```./race --help```.
+
+### Commands
+
+Once you have a server running, you can communicate with it via simple commands.
+
+The following definitions should be acknowledged:
+
+  - **P** is the player number (an int between 0 and 3 inclusive)
+  - **S** is the speed to travel (an int between 0 and 15 inclusive)
+  - **L** is lane change state (0 = off, 1 = on)
+
+The commands are:
+
+  - **start**: Start responding to IR syncs
+  - **stop**: Stop responding to IR syncs (cars will instantly stop but retain their state)
+  - **pPsS**: Set player *P* to speed *S*
+  - **pPlL**: Set player *P*'s lane change status to *L*
 
 Note, the infrared packets are physically sent and received by [lirc](http://www.lirc.org/), which must be running in order for Laser Drift to successfully initialize. The full list of software and hardware dependencies is listed in the [What you need](#Whatyouneed) section below.
 
