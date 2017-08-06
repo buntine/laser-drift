@@ -10,6 +10,7 @@ host = sys.argv[1]
 port = int(sys.argv[2])
 
 def close():
+    sock.shutdown(socket.SHUT_RDWR)
     sock.close()
     print("Exiting...")
     sys.exit()

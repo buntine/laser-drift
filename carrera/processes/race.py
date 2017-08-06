@@ -51,7 +51,7 @@ class Race(Process):
                     while not self.q.empty():
                         self.__handle_message(self.q.get(False))
         except KeyboardInterrupt:
-            logging.info("Terminating Race")
+            logging.warn("Terminating Race")
         except:
             logging.error("Cannot connect to lirc with socket: %s" % self.socket)
         

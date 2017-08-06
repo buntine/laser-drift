@@ -74,3 +74,4 @@ class Server(Process):
             server.serve_forever()
         except KeyboardInterrupt:
             logging.warn("Terminating Server")
+            server.shutdown()
