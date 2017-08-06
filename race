@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
 import sys
-from carrera import Carrera
+from laserdrift import LaserDrift
 from optparse import OptionParser
 
-parser = OptionParser(description="Starts a Carrera racing server with the given players.")
+parser = OptionParser(description="Starts a Laser Drift racing server with the given players.")
 
 parser.add_option("-s", "--socket", dest="socket", default="/var/run/lirc/lircd",
                   help="Location of the lircd socket [default: %default]", metavar="PATH")
@@ -35,7 +35,7 @@ if not opts.players:
 
 opts.players.sort()
 
-c = Carrera(opts.logfile)
+c = LaserDrift(opts.logfile)
 
 try:
     c.run(players=opts.players,

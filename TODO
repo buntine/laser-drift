@@ -1,9 +1,9 @@
-- Change class/code from Carrera to LaserDrift
-- Free up port on exit (of repl)
 - Is 9ms correct? Should use sched library?
 - Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
-- Deal with Lirc crashing or send command getting "broken pipe" error (possible?)
+- Deal with Lirc crashing or send command getting "broken pipe" error and "did not receive SYNC" error (possible?)
 - Documentation / README
+**- Change class/code from Carrera to LaserDrift
+**- Free up port on exit (of repl) (Fixed in node keyboard script only)
 **- Network tapping game
 **- Each process to handle signal. (Kinda dank, but handling SIGINT)
 **- Robustness (rescue exceptions, fail gracefully, etc)

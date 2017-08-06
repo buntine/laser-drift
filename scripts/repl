@@ -4,7 +4,7 @@ import socket
 import sys
 import signal
 
-"""A simple REPL to send commands to a Carrera server."""
+"""A simple REPL to send commands to a Laser Drift server."""
 
 host = sys.argv[1]
 port = int(sys.argv[2])

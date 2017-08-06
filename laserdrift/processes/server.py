@@ -65,13 +65,15 @@ class Server(Process):
         """Starts a TCP server that listens for commands and funnels them
            safelty to the Race process for execution."""
 
-        server = socketserver.TCPServer((self.host, self.port), TCPHandler)
-        server.q = self.q
-
-        logging.info("TCP Server process initialized")
-
         try:
+            server = socketserver.TCPServer((self.host, self.port), TCPHandler)
+            server.q = self.q
+
+            logging.info("TCP server process initialized")
+
             server.serve_forever()
+        except OSError:
+            logging.error("Cannot start TCP server on %s:%d" % (self.host, self.port))
         except KeyboardInterrupt:
-            logging.warn("Terminating Server")
+            logging.warn("Terminating server")
             server.shutdown()
