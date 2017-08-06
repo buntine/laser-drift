@@ -53,7 +53,7 @@ stdin.on('data', function(key){
 
   if (key === 'l') {
     state.laneChange = !state.laneChange;
-    send(player(state.laneChange ? 'l0' : 'l1'));
+    send(player(state.laneChange ? 'l1' : 'l0'));
   }
 
   sk = SPEED_KEYS.indexOf(key);
