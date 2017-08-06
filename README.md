@@ -8,6 +8,8 @@ Laser Drift allows you to control the speed and lane change status of your cars 
 
 This system acts as a low level interface into a Carrera Digital slot car set and is intended to be used to build higher lever applications.  See the [frontends](#Frontends) section for some examples of things you can do with this system. 
 
+I have some additional details and a technical explanation of the reverse engineering process available [at my blog](http://bunts.io/).
+
 ## How it works
 
 The main Laser Drift system is comprised of two processes:
@@ -70,6 +72,20 @@ You will need the following hardware (or equivalent):
 Currently, I've only been able to emulate the older infrared controllers with decent accuracy. The more modern 2.4Ghz wireless+ controllers are not supported (yet). Please note, you *do not* actually need any of the old controllers for this system to operate.
 
 ## Installation
+
+TODO
+
+  - Lirc (latest - maybe from source)
+  - Move dist/aaa.conf to /blah/blah
+  - Test with `irw` and `irsend`
+  - Run race server
+  
+  - Light polution
+  - Braking setting
+  - Speed setting
+
+  - lirc_options.conf
+  - Python bindings not working
 
 ## FAQ
 
