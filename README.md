@@ -47,9 +47,9 @@ Note, the infrared packets are physically sent and received by [lirc](http://www
 This repo provides two simple frontend applications:
 
   - **repl**: Provides a REPL to send raw commands to a Laser Drift server
-    ```./scripts/repl [host=localhost] [port=8099]```
+    - ```./scripts/repl [host=localhost] [port=8099]```
   - **keyboard**: A simple keyboard-based controller (node.js)
-    ```./scripts/keyboard [player] [host=localhost] [port=8099]```
+    - ```./scripts/keyboard [player] [host=localhost] [port=8099]```
 
 Other frontends can be built in any programming language that has a networking library (AKA: any language). Some ideas are:
 
