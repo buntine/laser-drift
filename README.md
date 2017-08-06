@@ -60,6 +60,20 @@ Other frontends can be built in any programming language that has a networking l
 
 ## What you need
 
+You will need the following hardware (or equivalent):
+
+  - Carrera Digital 132/124 race track with [Control Unit](http://www.carrera-toys.com/en/products/digital-132/accessories/control-unit-361/) (any modern set will do).
+  - [Carrera Wireless Receiver/Tower](http://www.carrera-toys.com/en/products/digital-132/accessories/wireless-empfaengertower-58/).
+  - Some [radical](http://www.carrera-toys.com/en/products/digital-132/cars/lamborghini-huracan-lp610-4-3003/years-2015/) [cars](http://www.carrera-toys.com/en/products/go/cars/ferrari-f12-berlinetta-3114/#64055).
+  - A USB infrared transceiver. I've successfully tested [USB-UIRT](http://www.usbuirt.com/) and the [irdroid](http://www.irdroid.com/).
+
+Currently, I've only been able to emulate the older infrared controllers with decent accuracy. The more modern 2.4Ghz wireless+ controllers are not supported (yet). Please note, you *do not* actually need any of the old controllers for this system to operate.
+
 ## Installation
 
 ## FAQ
+
+  - Where is the test suite?
+    - Honestly, I don't even think I know how to write tests for an application like this. Literally everything important here relies heavily on the outside world.
+  - Who did the logo?
+    - [Melanie Huang](http://melaniehuang.com/) with the background by [Freepik](http://freepik.com/)
