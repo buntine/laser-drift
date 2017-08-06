@@ -11,17 +11,32 @@ var client = new net.Socket();
 
 const SPEED_KEYS = ['0', '1', '2', '3', '4', '5', '6', '7',
                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+
+var args = process.argv.slice(2);
+
+if (args.length < 1) {
+  console.log('Expected player number, [host] and [port].');
+  process.exit(1);
+}
+
 const state = {
   started: false,
-  lanechange: false
+  lanechange: false,
+  player: parseInt(args[0]),
+  host: args[1] || 'localhost',
+  port: args[2] ? parseInt(args[2]) : 8099
 };
 
 function send(command) {
-  client.connect(9999, '10.1.1.218', function(){
+  client.connect(state.port, state.host, function(){
     client.write(command);
-    console.log("Sent:", command);
+    console.log('Sent:', command);
     client.destroy();
   });
+}
+
+function player(command) {
+  return "p" + state.player + command;
 }
 
 stdin.on('data', function(key){
@@ -36,12 +51,12 @@ stdin.on('data', function(key){
 
   if (key === 'l') {
     state.laneChange = !state.laneChange;
-    send(state.laneChange ? 'p1l0' : 'p1l1')
+    send(player(state.laneChange ? 'l0' : 'l1'));
   }
 
   sk = SPEED_KEYS.indexOf(key);
 
   if (sk > -1) {
-    send('p1s' + sk);
+    send(player('s' + sk));
   }
 });
