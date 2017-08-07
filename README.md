@@ -91,6 +91,8 @@ TODO
 
   - Did you have any help?
     - Yes! The resources available at [SlotBaer](http://www.slotbaer.de) were very important during the reverse engineering process. And Reddit user [byingling](https://www.reddit.com/user/byingling) who helped me with some hardware specifics (and even sent me an old controller!)
+  - Why infrared?
+        - Because it's much easier to capture and decode signals from devices that emit 38khz IR than devices that operate at 2.4ghz. IR controllers are effectively television remotes. Cheap, off-the-shelf IR transceivers are also much easier to come across. Yes, I suppose I could also have used the wired controllers, but I don't have the depth of knowledge in electrical engineering required to prevent myself from being electrucuted to death.
   - Where is the test suite?
     - Honestly, I don't even think I know how to write tests for an application like this. Literally everything important here relies heavily on the outside world.
   - Who did the logo?
