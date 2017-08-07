@@ -101,9 +101,9 @@ nodaemon        = False
 Once installed, you can test that lirc is receiving data by starting a `lircd` daemon and using the `mode2` binary:
 
   - Plug in your USB IR transceiver
-  - ```$ sudo lircd --nodaemon```
-  - ```$ mode2```
-  - Point a TV remove at the device and press some buttons
+  - Start lirc: ```$ sudo lircd --nodaemon```
+  - Print raw data: ```$ mode2```
+  - Point a TV remove at the device and press some buttons (using the Carrera IR controllers will not work unless the IR tower is in range and turned on as they only emit IR if they are receiving syncing blasts from it)
   - You should see a raw stream of pulses and spaces caught by your device and sent to lirc for processing
   - Lirc (latest - maybe from source)
 
