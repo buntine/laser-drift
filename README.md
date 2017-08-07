@@ -73,24 +73,61 @@ Currently, I've only been able to emulate the older infrared controllers with de
 
 ## Installation
 
-TODO
+I assume you are using Linux. I've successfully tested on Debian 9 and Arch Linux. It's also totally possible that Laser Drift may work in a Windows environment with [WinLirc](http://winlirc.sourceforge.net/) (let me know if you try).
 
+### Lirc
+
+You will need to install [lirc](http://lirc.org/) at `>= v0.10.0`. At the time of writing, this is the bleeding edge version and is not available in any of the respositories of major package managers (although there is an Arch User Repository you can use). I decided to compile it from source.
+
+I used the USB-UIRT transceiver (AKA: send/receive), which is supported natively by lirc with the `usb_uirt_raw` driver. My `lirc_options.conf` file looks a bit like this:
+
+```
+[lircd]
+nodaemon        = False
+driver          = usb_uirt_raw
+device          = /dev/ttyUSB0
+output          = /usr/local/var/run/lirc/lircd
+pidfile         = /usr/local/var/run/lirc/lircd.pid
+plugindir       = /usr/local/lib/lirc/plugins
+permission      = 666
+allow-simulate  = Yes
+repeat-max      = 600
+
+[lircmd]
+uinput          = False
+nodaemon        = False
+```
+
+Once installed, you can test that lirc is receiving data by starting a `lircd` daemon and using the `mode2` binary:
+
+  - Plug in your USB IR transceiver
+  - ```$ sudo lircd --nodaemon```
+  - ```$ mode2```
+  - Point a TV remove at the device and press some buttons
+  - You should see a raw stream of pulses and spaces caught by your device and sent to lirc for processing
   - Lirc (latest - maybe from source)
+
+- Python bindings not working
+
+### Carrera signals
+
   - Move dist/aaa.conf to /blah/blah
   - Test with `irw` and `irsend`
+
+### Race server
+
   - Run race server
   
+### Recommendations
+
   - Light polution
   - Braking setting
   - Speed setting
 
-  - lirc_options.conf
-  - Python bindings not working
-
 ## FAQ
 
   - Did you have any help?
-    - Yes! The resources available at [SlotBaer](http://www.slotbaer.de) were very important during the reverse engineering process. And Reddit user [byingling](https://www.reddit.com/user/byingling) who helped me with some hardware specifics (and even sent me an old controller!)
+    - Yes! The resources available at [SlotBaer](http://www.slotbaer.de) were very important during the reverse engineering process. And Reddit user [byingling](https://www.reddit.com/user/byingling) who helped me with some hardware specifics (and even sent me an old controller!). Also, [David Cristofaro](https://dtcristo.com/) helped me a lot in the first couple of days when I was figuring out how devices like the Carrera race tracks may operate.
   - Why infrared?
     - Because it's much easier to capture and decode signals from devices that emit 38khz IR than devices that operate at 2.4ghz. IR controllers are effectively television remotes. Cheap, off-the-shelf IR transceivers are also much easier to come across. Yes, I suppose I could also have used the wired controllers, but I don't have the depth of knowledge in electrical engineering required to prevent myself from being electrucuted to death.
   - Where is the test suite?
