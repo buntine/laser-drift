@@ -17,13 +17,13 @@ The main Laser Drift system is comprised of two processes:
   - A game loop that maintains each players state, listens for syncing pulses from the IR tower, and encodes each players data into a data packet the control unit expects. The game loop also consumes commands from the TCP server every ~60ms.
   - A TCP server that accepts commands from the outside world and translates them into a data structures the game loop understands. Those data packets are then added to a queue for consumption by the game loop.
 
-A server and game loop can be spun up using the `race` program. In this case we are starting a server on port 8099 that will send data packets for players 1 and 2:
+A server and game loop can be spun up using the `laserdriftd` program. In this case we are starting a server on localhost:8099 that will send data packets for players 1 and 2:
 
 ```
-./race --host=127.0.0.1 --port=8099 --p1 --p2 --socket="/usr/local/var/run/lirc/lircd"
+$ ./laserdriftd --port=8099 --p1 --p2 --socket="/usr/local/var/run/lirc/lircd"
 ```
 
-A full set of options can be seen by passing the help flag: ```./race --help```.
+See the [Installation](#Installation) section for more information.
 
 ### Commands
 
@@ -141,15 +141,23 @@ And sending:
   - ```$ irsend SEND_ONCE carrera SYNC```
   - You should see the lights on your transceiver flash a couple of times
 
-### Race server
+### Laser Drift server
 
-  - Run race server
+Laser Drift can now be started:
+
+```
+$ ./laserdriftd --host=192.168.1.1 --daemon --logfile="/var/log/laserdriftd.log" --port=8080 --p1 --p3  
+```
+
+By default, `laserdriftd` will not run as a daemon and will simply log to STDOUT.
+
+A full set of options can be seen by passing the help flag: ```./laserdriftd --help```.
   
 ### Recommendations
 
-  - Light polution
-  - Braking setting
-  - Speed setting
+  - Reduce light pollution. Have the IR tower and USB IR device in a low-light environment (like hidden in a box somewhere)
+  - Braking performance should be programmed on your Carrera set to about a 1 or 2. This will prevent the cars from jerking if pulse cycles are missed
+  - I programmed my cars at a speed of about 7 - 9. If yu program them all the way up then even a mild speed may send them off the rails. Which is pretty rad, but gets annoying.
 
 ## FAQ
 
