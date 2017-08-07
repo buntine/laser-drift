@@ -89,6 +89,8 @@ TODO
 
 ## FAQ
 
+  - Did you have any help?
+    - Yes! The resources available at [SlotBaer](http://www.slotbaer.de) were very important during the reverse engineering process. And Reddit user [byingling](https://www.reddit.com/user/byingling) who helped me with some hardware specifics (and even sent me an old controller!)
   - Where is the test suite?
     - Honestly, I don't even think I know how to write tests for an application like this. Literally everything important here relies heavily on the outside world.
   - Who did the logo?
