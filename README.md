@@ -40,6 +40,8 @@ The commands are:
   - **start**: Start responding to IR syncs
   - **stop**: Stop responding to IR syncs (cars will instantly stop but retain their state)
   - **pPsS**: Set player *P* to speed *S*
+  - **pPs+**: Increment player *P*'s speed by 1 (if possible)
+  - **pPs-**: Decrement player *P*'s speed by 1 (if possible)
   - **pPlL**: Set player *P*'s lane change status to *L*
 
 Note, the infrared packets are physically sent and received by [lirc](http://www.lirc.org/), which must be running in order for Laser Drift to successfully initialize. The full list of software and hardware dependencies is listed in the [What you need](#Whatyouneed) section below.

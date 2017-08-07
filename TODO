@@ -1,7 +1,10 @@
 - Option to run as daemon?
+- Tests? Mock the IR stuff?
 - Is 9ms correct? Should use sched library?
 - Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
 - Deal with Lirc crashing or send command getting "broken pipe" error and "did not receive SYNC" error (possible?)
+- Fix LD_LIBRARY_PATH="/usr/local/lib"
+- pPs+ and pPs- commands
 
 **- Documentation / README
 **- Change class/code from Carrera to LaserDrift
@@ -17,8 +20,3 @@
 **- Comments at top of script(s), etc.
 **- Type signatures for all functions.
 **- Why does red car suck so much? (Answer: Fucking braking!)
-
-Useful:
-  LD_LIBRARY_PATH="/usr/local/lib" ./race --port=9999 --p1 --p2 --socket="/usr/local/var/run/lirc/lircd"
-  ./scripts/repl
-  sudo lircd --nodaemon
