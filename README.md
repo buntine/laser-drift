@@ -107,12 +107,39 @@ Once installed, you can test that lirc is receiving data by starting a `lircd` d
   - You should see a raw stream of pulses and spaces caught by your device and sent to lirc for processing
   - Lirc (latest - maybe from source)
 
-- Python bindings not working
+I had some issues in getting the Python bindings for lirc installed on my system. I ended up having to run `setup.py` manually and copy some files around a bit. Hopefully you won't run into this issue, but if you do:
+
+```
+$ cd /usr/local/share/lirc/python-pkg/
+$ sudo PKG_CONFIG_PATH="/usr/local/lib/pkgconfig/" python3 setup.py install
+$ sudo cp config.py /usr/lib/python3.6/site-packages/lirc-0.0.0-py3.6-linux-x86_64.egg/lirc/
+```
+
+And now this should run without error:
+```
+$ python -c "import lirc"
+```
 
 ### Carrera signals
 
-  - Move dist/aaa.conf to /blah/blah
-  - Test with `irw` and `irsend`
+You will need to let lirc know about all of the signals Carrera IR controllers are capable of sending. To do this, you can copy the pre-generated lircd configuration in this repository to your local lirc path:
+
+```
+sudo cp ./dist/carrera.remote.lircd.conf /usr/local/ect/lirc/lircd.conf.d/
+```
+
+And then restart lirc.
+
+Now you can test your receiving:
+
+  - Point your IR tower at your IR transceiver
+  - ```$ irw```
+  - You should see something like ```00000000001 carrera SYNC``` as lirc interprets the input
+
+And sending:
+
+  - ```$ irsend SEND_ONCE carrera SYNC```
+  - You should see the lights on your transceiver flash a couple of times
 
 ### Race server
 
