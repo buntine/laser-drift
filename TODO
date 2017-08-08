@@ -4,6 +4,7 @@
 - Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
 - Deal with Lirc crashing or send command getting "broken pipe" error and "did not receive SYNC" error (possible?)
 - Fix LD_LIBRARY_PATH="/usr/local/lib"
+- Type Racer frontend (average words per 10-seconds while writing text)
 - pPs+ and pPs- commands
 
 **- Documentation / README

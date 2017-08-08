@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
+import logging
 import sys
+import daemon
 from laserdrift import LaserDrift
 from optparse import OptionParser
 
@@ -35,13 +37,18 @@ if not opts.players:
 
 opts.players.sort()
 
-c = LaserDrift(opts.logfile)
+ld = LaserDrift(opts.logfile)
+logfile = logging.root.handlers[0].stream.fileno()
+process = daemon.DaemonContext(files_preserve=[logfile])
 
 try:
-    c.run(players=opts.players,
-          host=opts.host,
-          port=int(opts.port),
-          socket=opts.socket,
-          remote=opts.remote)
+    process.open()
+    ld.run(players=opts.players,
+           host=opts.host,
+           port=int(opts.port),
+           socket=opts.socket,
+           remote=opts.remote)
 except KeyboardInterrupt:
-    c.terminate()
+    ld.terminate()
+finally:
+    process.close()
