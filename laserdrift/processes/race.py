@@ -1,10 +1,13 @@
-from time import sleep
-from multiprocessing import Process
+import sched
+from time
 import logging
 import lirc
 import re
+from multiprocessing import Process
 
 class Player:
+    MAX_SPEED = 16
+
     def __init__(self, nth: int):
         self.nth = nth
         self.speed = 0
@@ -17,7 +20,7 @@ class Player:
         }
 
     def setspeed(self, s: int):
-        if s in range(0, 16):
+        if s in range(0, MAX_SPEED):
             self.speed = s
 
     def setlanechange(self, lc: bool):
@@ -46,6 +49,9 @@ class Race(Process):
        and responds with each players details. Listens for commands from the TCP
        server process."""
 
+    DELAY = 0.009
+    TIMEOUT = 0.010
+
     def __init__(self, q, players: [int], remote: str, socket: str):
         Process.__init__(self)
         self.q = q
@@ -58,20 +64,17 @@ class Race(Process):
 
     def run(self):
         try:
-            conn = self.__lirc_conn();
+            self.conn = self.__lirc_conn();
 
             while True:
-                if self.active and self.__find_sync(conn):
+                if self.active and self.__find_sync():
+                    schedule = sched.scheduler(time.time, time.sleep)
+
                     for _, p in self.players.items():
                         if p.moving():
-                            sleep(0.009)
+                            schedule.enter(DELAY * (p.nth + 1), 1, self.__send, (p))
 
-                            try:
-                                lirc.SendCommand(conn, self.remote, [p.key()]).run()
-                            except BrokenPipeError:
-                                logging.info("Refreshing lirc connection")
-                                conn.close()
-                                conn = self.__lirc_conn()
+                    schedule.run()
 
                 # Apply state changes as per requests from TCP server.
                 while not self.q.empty():
@@ -79,15 +82,15 @@ class Race(Process):
         except KeyboardInterrupt:
             logging.warn("Terminating Race")
         finally:
-            conn.close()
+            self.conn.close()
         
-    def __find_sync(self, conn: lirc.client.AbstractConnection) -> bool:
+    def __find_sync(self) -> bool:
         """Waits for a blast from the lirc process and returns true if it's
            a syncing signal from the Carrera IR tower."""
         sync = "SYNC %s" % self.remote
 
         try:
-            msg = conn.readline(1)
+            msg = self.conn.readline(1)
             return sync in msg
         except:
             logging.warn("Did not receive SYNC from %s, skipping." % self.remote)
@@ -121,6 +124,17 @@ class Race(Process):
     def __activate(self, command: str):
         self.active = (command == "start")
         logging.info("Race state updated: %s" % command)
+
+    def __send(self, p: Player):
+        """Attempt to send command to lirc via the socket."""
+        try:
+            lirc.SendCommand(self.conn, self.remote, [p.key()]).run(TIMEOUT)
+        except lirc.client.TimeoutException:
+            logging.warn("Player %d send_once to lirc timed out" % p.nth)
+        except BrokenPipeError:
+            logging.info("Refreshing lirc connection")
+            self.conn.close()
+            self.conn = self.__lirc_conn()
 
     def __lirc_conn(self) -> lirc.client.AbstractConnection:
         return lirc.CommandConnection(socket_path=self.socket)
