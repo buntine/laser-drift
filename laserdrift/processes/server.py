@@ -31,13 +31,13 @@ class TCPHandler(socketserver.BaseRequestHandler):
         logging.warning("Unknown command: %s", command)
         self.request.sendall(b"ERR")
 
-    def __start(self, _):
+    def __start(self, _) -> hash:
         return {"message": "start", "data": {}}
 
-    def __stop(self, _):
+    def __stop(self, _) -> hash:
         return {"message": "stop", "data": {}}
 
-    def __speed(self, values: hash):
+    def __speed(self, values: hash) -> hash:
         return {
             "message": "speed",
             "data": {
@@ -46,7 +46,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
             }
         }
 
-    def __speedinc(self, values: hash):
+    def __speedinc(self, values: hash) -> hash:
         return {
             "message": "speedinc",
             "data": {
@@ -55,7 +55,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
             }
         }
 
-   def __lanechange(self, values: hash):
+    def __lanechange(self, values: hash) -> hash:
         return {
             "message": "lanechange",
             "data": {

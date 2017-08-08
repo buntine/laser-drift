@@ -17,7 +17,8 @@ class Player:
         }
 
     def setspeed(self, s: int):
-        self.speed = s
+        if s in range(0, 16):
+            self.speed = s
 
     def setlanechange(self, lc: bool):
         self.lanechange = lc
@@ -25,13 +26,13 @@ class Player:
     def incspeed(self, step: int):
         self.setspeed(self.speed + step)
 
-    def moving(self):
+    def moving(self) -> int:
         return self.speed > 0
 
-    def key(self):
+    def key(self) -> str:
         return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lanechange else 0)
 
-    def execute(command: str, value):
+    def execute(command: str, value) -> bool:
         f = self.__handlers.get(command)
 
         if f:
@@ -73,7 +74,7 @@ class Race(Process):
         except:
             logging.error("Cannot connect to lirc with socket: %s" % self.socket)
         
-    def __find_sync(self, conn: lirc.client.AbstractConnection):
+    def __find_sync(self, conn: lirc.client.AbstractConnection) -> bool:
         """Waits for a blast from the lirc process and returns true if it's
            a syncing signal from the Carrera IR tower."""
         sync = "SYNC %s" % self.remote
@@ -91,7 +92,7 @@ class Race(Process):
 
         if re.match(r"start|stop", command):
             self.__activate(command)
-        else
+        else:
             data = msg["data"]
             value = data["value"]
             p = self.players.get(data["player"])
@@ -104,7 +105,7 @@ class Race(Process):
             else:
                 logging.warning("Cannot set %s for player %d" % (command, data["player"]))
 
-    def __make_players(self, players: [Player]):
+    def __make_players(self, players: [Player]) -> hash:
         p = players.copy()
         p.sort()
 
