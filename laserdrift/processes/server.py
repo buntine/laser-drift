@@ -13,6 +13,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
             r"start": self.__start,
             r"stop": self.__stop,
             r"p(?P<player>\d)s(?P<speed>\d{1,2})": self.__speed,
+            r"p(?P<player>\d)s(?P<op>[+-])": self.__speedinc,
             r"p(?P<player>\d)l(?P<status>\d)": self.__lanechange
         }
 
@@ -30,13 +31,13 @@ class TCPHandler(socketserver.BaseRequestHandler):
         logging.warning("Unknown command: %s", command)
         self.request.sendall(b"ERR")
 
-    def __start(self, v):
+    def __start(self, _):
         return {"message": "start", "data": {}}
 
-    def __stop(self, v):
+    def __stop(self, _):
         return {"message": "stop", "data": {}}
 
-    def __speed(self, values):
+    def __speed(self, values: hash):
         return {
             "message": "speed",
             "data": {
@@ -45,7 +46,16 @@ class TCPHandler(socketserver.BaseRequestHandler):
             }
         }
 
-    def __lanechange(self, values):
+    def __speedinc(self, values: hash):
+        return {
+            "message": "speedinc",
+            "data": {
+                "player": int(values["player"]),
+                "value": int(1 if values["op"] == "+" else -1),
+            }
+        }
+
+   def __lanechange(self, values: hash):
         return {
             "message": "lanechange",
             "data": {

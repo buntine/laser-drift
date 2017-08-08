@@ -10,17 +10,35 @@ class Player:
         self.speed = 0
         self.lanechange = False
 
+        self.__handlers = {
+            "speed": self.setspeed,
+            "incspeed": self.incspeed,
+            "lanechange": self.setlanechange,
+        }
+
     def setspeed(self, s: int):
         self.speed = s
 
     def setlanechange(self, lc: bool):
         self.lanechange = lc
 
+    def incspeed(self, step: int):
+        self.setspeed(self.speed + step)
+
     def moving(self):
         return self.speed > 0
 
     def key(self):
         return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lanechange else 0)
+
+    def execute(command: str, value):
+        f = self.__handlers.get(command)
+
+        if f:
+            f(value)
+            return True
+        else:
+            return False
 
 class Race(Process):
     """Executes the main game loop. Listens for syncing pulses from Carrera IR tower
@@ -72,24 +90,26 @@ class Race(Process):
         command = msg["message"]
 
         if re.match(r"start|stop", command):
-            self.active = (command == "start")
-            logging.info("Race state updated: %s" % command)
-        elif re.match(r"speed|lanechange", command):
+            self.__activate(command)
+        else
             data = msg["data"]
             value = data["value"]
             p = self.players.get(data["player"])
 
             if p:
-                f = p.setspeed if command == "speed" else p.setlanechange
-                f(value)
-                logging.info("Player %d set %s to %s" % (p.nth, command, value))
+                if p.execute(command, value):
+                    logging.info("Player %d set %s to %s" % (p.nth, command, value))
+                else:
+                    logging.warning("Unknown command: %s", command)
             else:
                 logging.warning("Cannot set %s for player %d" % (command, data["player"]))
-        else:
-            logging.warning("Unknown command: %s" % command)
 
     def __make_players(self, players: [Player]):
         p = players.copy()
         p.sort()
 
         return {n: Player(n) for n in players}
+
+    def __activate(self, command: str):
+        self.active = (command == "start")
+        logging.info("Race state updated: %s" % command)
