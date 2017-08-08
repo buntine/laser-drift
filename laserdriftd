@@ -8,6 +8,8 @@ from optparse import OptionParser
 
 parser = OptionParser(description="Starts a Laser Drift racing server with the given players.")
 
+parser.add_option("-d", "--daemon", action="store_true", dest="daemon", default=False,
+                  help="Daemonise the laserdriftd process")
 parser.add_option("-s", "--socket", dest="socket", default="/var/run/lirc/lircd",
                   help="Location of the lircd socket [default: %default]", metavar="PATH")
 parser.add_option("-H", "--host", dest="host", default="localhost",
@@ -31,8 +33,14 @@ parser.add_option("--p4", action="append_const", const=4, dest="players",
 
 (opts, _) = parser.parse_args()
 
+logging.basicConfig(filename=opts.logfile, level=logging.INFO)
+
 if not opts.players:
-    print("Error: Atleast one player must be active.")
+    logging.error("Atleast one player must be active.")
+    sys.exit(1)
+
+if opts.daemon and not opts.logfile:
+    logging.error("Log file must be specified when running as a daemon")
     sys.exit(1)
 
 opts.players.sort()
@@ -42,13 +50,17 @@ logfile = logging.root.handlers[0].stream.fileno()
 process = daemon.DaemonContext(files_preserve=[logfile])
 
 try:
-    process.open()
+    if opts.daemon:
+        process.open()
+
     ld.run(players=opts.players,
            host=opts.host,
            port=int(opts.port),
+           daemon=opts.daemon,
            socket=opts.socket,
            remote=opts.remote)
 except KeyboardInterrupt:
     ld.terminate()
 finally:
-    process.close()
+    if opts.daemon:
+        process.close()

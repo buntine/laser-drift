@@ -4,17 +4,16 @@ from .processes import server, race
 
 class LaserDrift:
     def __init__(self, logfile: str):
-        logging.basicConfig(filename=logfile, level=logging.INFO)
         logging.info("Laser Drift Racing System initialization")
     
-    def run(self, port=8099, host="localhost", socket="/var/run/lirc/lircd", remote="carrera", players=[0,1]):
+    def run(self, port=8099, host="localhost", daemon=False, socket="/var/run/lirc/lircd", remote="carrera", players=[0,1]):
         """Start processes and wait for them to return (if ever)."""
         q = Queue()
         self.s = server.Server(q, port, host)
         self.r = race.Race(q, players, remote, socket)
 
-        self.s.daemon = True
-        self.r.daemon = True
+        self.s.daemon = daemon
+        self.r.daemon = daemon
 
         self.s.start()
         self.r.start()

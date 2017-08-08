@@ -1,4 +1,3 @@
-- Option to run as daemon?
 - Tests? Mock the IR stuff?
 - Is 9ms correct? Should use sched library?
 - Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
@@ -7,6 +6,7 @@
 - Type Racer frontend (average words per 10-seconds while writing text)
 - pPs+ and pPs- commands
 
+** - Option to run as daemon?
 **- Documentation / README
 **- Change class/code from Carrera to LaserDrift
 **- Free up port on exit (of repl) (Fixed in node keyboard script only)

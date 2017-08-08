@@ -100,7 +100,7 @@ uinput          = False
 nodaemon        = False
 ```
 
-Once installed, you can test that lirc is receiving data by starting a `lircd` daemon and using the `mode2` binary:
+Once installed, you can test that lirc is receiving data by starting a `lircd` process and using the `mode2` binary:
 
   - Plug in your USB IR transceiver
   - Start lirc: ```$ sudo lircd --nodaemon```
@@ -152,6 +152,8 @@ $ ./laserdriftd --host=192.168.1.1 --daemon --logfile="/var/log/laserdriftd.log"
 ```
 
 By default, `laserdriftd` will not run as a daemon and will simply log to STDOUT.
+
+You can kill `laserdriftd` by sending a `SIGINT` signal to the main process: ```$ kill -2 <pid>```
 
 A full set of options can be seen by passing the help flag: ```./laserdriftd --help```.
   
