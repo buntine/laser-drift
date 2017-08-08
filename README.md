@@ -58,7 +58,8 @@ This repo provides two simple frontend applications:
 Other frontends can be built in any programming language that has a networking library (AKA: any language). Some ideas are:
 
   - Voice-controlled racing
-  - Tap racer (the more you press, the faster you drive)
+  - Tap Racer: The more you press, the faster you drive
+  - Type Racer: You must type out a paragraph and the car travels relative to your words-per-minute
   - Race with hand gestures using a [Leap Motion](https://www.leapmotion.com/)
   - Do a lap every time someone tweets about your favourite topic
 

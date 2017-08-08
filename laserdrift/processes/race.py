@@ -32,7 +32,7 @@ class Player:
     def key(self) -> str:
         return "P%dS%dL%d" % (self.nth, self.speed, 1 if self.lanechange else 0)
 
-    def execute(command: str, value) -> bool:
+    def execute(self, command: str, value) -> bool:
         f = self.__handlers.get(command)
 
         if f:
