@@ -58,21 +58,28 @@ class Race(Process):
 
     def run(self):
         try:
-            with lirc.CommandConnection(socket_path=self.socket) as conn:
-                while True:
-                    if self.active and self.__find_sync(conn):
-                        for _, p in self.players.items():
-                            if p.moving():
-                                sleep(0.009)
-                                lirc.SendCommand(conn, self.remote, [p.key()]).run()
+            conn = self.__lirc_conn();
 
-                    # Apply state changes as per requests from TCP server.
-                    while not self.q.empty():
-                        self.__handle_message(self.q.get(False))
+            while True:
+                if self.active and self.__find_sync(conn):
+                    for _, p in self.players.items():
+                        if p.moving():
+                            sleep(0.009)
+
+                            try:
+                                lirc.SendCommand(conn, self.remote, [p.key()]).run()
+                            except BrokenPipeError:
+                                logging.info("Refreshing lirc connection")
+                                conn.close()
+                                conn = self.__lirc_conn()
+
+                # Apply state changes as per requests from TCP server.
+                while not self.q.empty():
+                    self.__handle_message(self.q.get(False))
         except KeyboardInterrupt:
             logging.warn("Terminating Race")
-        except:
-            logging.error("Cannot connect to lirc with socket: %s" % self.socket)
+        finally:
+            conn.close()
         
     def __find_sync(self, conn: lirc.client.AbstractConnection) -> bool:
         """Waits for a blast from the lirc process and returns true if it's
@@ -114,3 +121,6 @@ class Race(Process):
     def __activate(self, command: str):
         self.active = (command == "start")
         logging.info("Race state updated: %s" % command)
+
+    def __lirc_conn(self) -> lirc.client.AbstractConnection:
+        return lirc.CommandConnection(socket_path=self.socket)
