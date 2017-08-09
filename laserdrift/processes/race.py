@@ -1,5 +1,5 @@
 import sched
-from time
+import time
 import logging
 import lirc
 import re
@@ -20,7 +20,7 @@ class Player:
         }
 
     def setspeed(self, s: int):
-        if s in range(0, MAX_SPEED):
+        if s in range(0, Player.MAX_SPEED):
             self.speed = s
 
     def setlanechange(self, lc: bool):
@@ -50,7 +50,8 @@ class Race(Process):
        server process."""
 
     DELAY = 0.009
-    TIMEOUT = 0.010
+    WRITE_TIMEOUT = 0.020
+    READ_TIMEOUT = 0.8
 
     def __init__(self, q, players: [int], remote: str, socket: str):
         Process.__init__(self)
@@ -72,7 +73,7 @@ class Race(Process):
 
                     for _, p in self.players.items():
                         if p.moving():
-                            schedule.enter(DELAY * (p.nth + 1), 1, self.__send, (p))
+                            schedule.enter(Race.DELAY * (p.nth + 1), 1, self.__send, [p])
 
                     schedule.run()
 
@@ -90,7 +91,7 @@ class Race(Process):
         sync = "SYNC %s" % self.remote
 
         try:
-            msg = self.conn.readline(1)
+            msg = self.conn.readline(Race.READ_TIMEOUT)
             return sync in msg
         except:
             logging.warn("Did not receive SYNC from %s, skipping." % self.remote)
@@ -127,8 +128,9 @@ class Race(Process):
 
     def __send(self, p: Player):
         """Attempt to send command to lirc via the socket."""
+        print("Sending")
         try:
-            lirc.SendCommand(self.conn, self.remote, [p.key()]).run(TIMEOUT)
+            lirc.SendCommand(self.conn, self.remote, [p.key()]).run(Race.WRITE_TIMEOUT)
         except lirc.client.TimeoutException:
             logging.warn("Player %d send_once to lirc timed out" % p.nth)
         except BrokenPipeError:
