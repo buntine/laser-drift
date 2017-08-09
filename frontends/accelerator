@@ -1,0 +1,36 @@
+#! /usr/bin/env python
+
+import curses
+
+def main(stdscr):
+    curses.init_pair(1, 1, 48)
+    curses.init_pair(2, 1, 46)
+    curses.init_pair(3, 1, 47)
+    curses.init_pair(4, 1, 118)
+    curses.init_pair(5, 1, 154)
+    curses.init_pair(6, 1, 190)
+    curses.init_pair(7, 1, 220)
+    curses.init_pair(8, 1, 208)
+    curses.init_pair(9, 1, 202)
+    curses.init_pair(10, 1, 196)
+    curses.init_pair(11, 1, 160)
+    curses.init_pair(12, 1, 124)
+    curses.init_pair(13, 1, 88)
+    curses.init_pair(14, 1, 88)
+    curses.init_pair(15, 1, 52)
+    curses.init_pair(16, 1, 52)
+
+    stdscr.clear()
+
+    x = int(curses.COLS / 2)
+    y = int(curses.LINES / 2)
+
+    for n in range(0, 16):
+        stdscr.addstr(y, x + (n * 4), "    ", curses.color_pair(n + 1))
+        stdscr.addstr(y+1, x + (n * 4), "    ", curses.color_pair(n + 1))
+
+
+    stdscr.refresh()
+    stdscr.getch()
+
+curses.wrapper(main)
