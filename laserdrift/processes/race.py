@@ -73,7 +73,7 @@ class Race(Process):
 
                     for _, p in self.players.items():
                         if p.moving():
-                            schedule.enter(Race.DELAY * (p.nth + 1), 1, self.__send, [p])
+                            schedule.enter(Race.DELAY * p.nth, 1, self.__send, (p,))
 
                     schedule.run()
 
@@ -128,7 +128,6 @@ class Race(Process):
 
     def __send(self, p: Player):
         """Attempt to send command to lirc via the socket."""
-        print("Sending")
         try:
             lirc.SendCommand(self.conn, self.remote, [p.key()]).run(Race.WRITE_TIMEOUT)
         except lirc.client.TimeoutException:
