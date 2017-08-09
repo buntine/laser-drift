@@ -67,14 +67,24 @@ Other frontends can be built in any programming language that has a networking l
 
 ## What you need
 
-You will need the following hardware (or equivalent):
+### Hardware
 
-  - Carrera Digital 132/124 race track with [Control Unit](http://www.carrera-toys.com/en/products/digital-132/accessories/control-unit-361/) (any modern set will do).
+You will need the following (or equivalent):
+
+  - Carrera Digital 132/124 race track with [Control Unit](http://www.carrera-toys.com/en/products/digital-132/accessories/control-unit-361/). Any modern set will be fine, but even older sets with the "black box" should be fine (although I have not tested that!)
   - [Carrera Wireless Receiver/Tower](http://www.carrera-toys.com/en/products/digital-132/accessories/wireless-empfaengertower-58/).
   - Some [radical](http://www.carrera-toys.com/en/products/digital-132/cars/lamborghini-huracan-lp610-4-3003/years-2015/) [cars](http://www.carrera-toys.com/en/products/go/cars/ferrari-f12-berlinetta-3114/#64055).
   - A USB infrared transceiver. I've successfully tested [USB-UIRT](http://www.usbuirt.com/) and the [irdroid](http://www.irdroid.com/).
 
 Currently, I've only been able to emulate the older infrared controllers with decent accuracy. The more modern 2.4Ghz wireless+ controllers are not supported (yet). Please note, you *do not* actually need any of the old controllers for this system to operate.
+
+### Software
+
+You will need the following:
+
+  - Linux - I've tried Debian and Arch Linux, but any modern distro that supports lirc should be fine
+  - [lirc](http://lirc.org/) - latest stable (>= v0.10)
+  - Python3
 
 ## Installation
 
