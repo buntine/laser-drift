@@ -10,7 +10,7 @@ def init_gradient():
     gradient = [48, 47, 82, 118, 154, 190, 220, 208, 202, 196, 160, 124, 88, 88, 52, 52]
 
     for i, c in enumerate(gradient):
-        curses.init_pair(i + 1, 0, c)
+        curses.init_pair(i + 1, 233 + i, c)
 
 def set_background(stdscr):
     curses.init_pair(17, 0, 236)
@@ -34,6 +34,8 @@ def visualize(stdscr, x, y, speed):
 def main(stdscr):
     init_gradient()
     set_background(stdscr)
+
+    curses.curs_set(0)
 
     stdscr.clear()
 
