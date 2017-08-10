@@ -3,7 +3,8 @@
 import time
 import curses
 
-CONTENT = "      "
+CONTENT = "  %s  "
+MAX_SPEED = 15
 
 def init_gradient():
     gradient = [48, 47, 82, 118, 154, 190, 220, 208, 202, 196, 160, 124, 88, 88, 52, 52]
@@ -17,10 +18,18 @@ def set_background(stdscr):
 
 def draw_block(stdscr, x, y, speed):
     for l in range(0, 3):
+        content = CONTENT % ((str(speed + 1).rjust(2, "0")) if l == 1 else "  ")
+
         stdscr.addstr(y + l,
                       x + (speed * len(CONTENT)),
-                      CONTENT,
+                      content,
                       curses.color_pair(speed + 1))
+
+def visualize(stdscr, x, y, speed):
+    stdscr.clear()
+
+    for n in range(0, speed):
+        draw_block(stdscr, x, y, n)
 
 def main(stdscr):
     init_gradient()
@@ -30,12 +39,22 @@ def main(stdscr):
 
     x = int(curses.COLS / 2) - (int(len(CONTENT)) * 8)
     y = int(curses.LINES / 2) - 1
+    state = {
+        "started": False,
+        "speed": 0,
+        "lanechange": False,
+    }
 
-    for n in range(0, 16):
-        draw_block(stdscr, x, y, n)
-        stdscr.refresh()
-        time.sleep(0.1)
+    while True:
+        ch = stdscr.getch()
 
-    stdscr.getch()
+        if ch == 113: # q
+            break
+        elif ch == curses.KEY_UP and state["speed"] <= MAX_SPEED:
+            state["speed"] += 1
+        elif ch == curses.KEY_DOWN and state["speed"] > 0:
+            state["speed"] -= 1
+
+        visualize(stdscr, x, y, state["speed"])
 
 curses.wrapper(main)
