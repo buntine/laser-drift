@@ -1,36 +1,41 @@
 #! /usr/bin/env python
 
+import time
 import curses
 
+CONTENT = "      "
+
+def init_gradient():
+    gradient = [48, 47, 82, 118, 154, 190, 220, 208, 202, 196, 160, 124, 88, 88, 52, 52]
+
+    for i, c in enumerate(gradient):
+        curses.init_pair(i + 1, 0, c)
+
+def set_background(stdscr):
+    curses.init_pair(17, 0, 236)
+    stdscr.bkgdset(" ", curses.color_pair(17))
+
+def draw_block(stdscr, x, y, speed):
+    for l in range(0, 3):
+        stdscr.addstr(y + l,
+                      x + (speed * len(CONTENT)),
+                      CONTENT,
+                      curses.color_pair(speed + 1))
+
 def main(stdscr):
-    curses.init_pair(1, 1, 48)
-    curses.init_pair(2, 1, 46)
-    curses.init_pair(3, 1, 47)
-    curses.init_pair(4, 1, 118)
-    curses.init_pair(5, 1, 154)
-    curses.init_pair(6, 1, 190)
-    curses.init_pair(7, 1, 220)
-    curses.init_pair(8, 1, 208)
-    curses.init_pair(9, 1, 202)
-    curses.init_pair(10, 1, 196)
-    curses.init_pair(11, 1, 160)
-    curses.init_pair(12, 1, 124)
-    curses.init_pair(13, 1, 88)
-    curses.init_pair(14, 1, 88)
-    curses.init_pair(15, 1, 52)
-    curses.init_pair(16, 1, 52)
+    init_gradient()
+    set_background(stdscr)
 
     stdscr.clear()
 
-    x = int(curses.COLS / 2)
-    y = int(curses.LINES / 2)
+    x = int(curses.COLS / 2) - (int(len(CONTENT)) * 8)
+    y = int(curses.LINES / 2) - 1
 
     for n in range(0, 16):
-        stdscr.addstr(y, x + (n * 4), "    ", curses.color_pair(n + 1))
-        stdscr.addstr(y+1, x + (n * 4), "    ", curses.color_pair(n + 1))
+        draw_block(stdscr, x, y, n)
+        stdscr.refresh()
+        time.sleep(0.1)
 
-
-    stdscr.refresh()
     stdscr.getch()
 
 curses.wrapper(main)
