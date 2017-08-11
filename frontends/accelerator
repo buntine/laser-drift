@@ -64,6 +64,12 @@ def main(stdscr):
             state["speed"] += 1
         elif ch == curses.KEY_DOWN and state["speed"] > 0:
             state["speed"] -= 1
+        elif ch > 48 and ch < 58: # 1 - 9
+            state["speed"] = ch - 49
+        elif ch > 96 and ch < 103: # a - f
+            state["speed"] = ch - 87
+        elif ch == 48: # 0
+            state["speed"] = 9
 
         visualize(stdscr, x, y, state["speed"])
 
