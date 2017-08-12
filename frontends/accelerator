@@ -16,10 +16,10 @@ def set_background(stdscr):
     curses.init_pair(17, 0, 236)
     stdscr.bkgdset(" ", curses.color_pair(17))
 
-def draw_block(stdscr, x, y, n, speed):
+def block(stdscr, x, y, n, speed):
     for l in range(0, 3):
         if n == speed:
-            content = CONTENT % ((str(n + 1).rjust(2, "0")) if l == 1 else "  ")
+            content = CONTENT % ((str(n + 1).zfill(2)) if l == 1 else "  ")
         else:
             content = CONTENT % "  "
 
@@ -29,26 +29,23 @@ def draw_block(stdscr, x, y, n, speed):
                       x + (n * len(CONTENT)),
                       content,
                       color)
+def toggle(stdscr, x, y, name, on=False):
+    for n in range(0, 3):
+        stdscr.addstr(y + n, x, "".rjust(12, " "), curses.color_pair(18))
+
+    for n in range(0, 3):
+        content = name if n == 1 else ""
+        offset = 6 if on else 0
+        stdscr.addstr(y + n, x + offset, content.center(6, " "), curses.color_pair(19))
 
 def render(stdscr, x, y, state):
     stdscr.clear()
 
     for n in range(0, MAX_SPEED + 1):
-        draw_block(stdscr, x, y, n, state["speed"])
+        block(stdscr, x, y, n, state["speed"])
 
-    stdscr.addstr(y + 5, x, "".rjust(12, " "), curses.color_pair(18))
-    stdscr.addstr(y + 6, x, "".rjust(12, " "), curses.color_pair(18))
-    stdscr.addstr(y + 7, x, "".rjust(12, " "), curses.color_pair(18))
-    stdscr.addstr(y + 5, x, "".rjust(6, " "), curses.color_pair(19))
-    stdscr.addstr(y + 6, x, "RACE".center(6, " "), curses.color_pair(19))
-    stdscr.addstr(y + 7, x, "".rjust(6, " "), curses.color_pair(19))
-
-    stdscr.addstr(y + 5, x + 16, "".rjust(12, " "), curses.color_pair(18))
-    stdscr.addstr(y + 6, x + 16, "".rjust(12, " "), curses.color_pair(18))
-    stdscr.addstr(y + 7, x + 16, "".rjust(12, " "), curses.color_pair(18))
-    stdscr.addstr(y + 5, x + 16, "".rjust(6, " "), curses.color_pair(19))
-    stdscr.addstr(y + 6, x + 16, "LC".center(6, " "), curses.color_pair(19))
-    stdscr.addstr(y + 7, x + 16, "".rjust(6, " "), curses.color_pair(19))
+    toggle(stdscr, x, y + 5, "RACE", state["started"])
+    toggle(stdscr, x + 16, y + 5, "LC", state["lanechange"])
 
 def main(stdscr):
     init_gradient()
@@ -85,6 +82,11 @@ def main(stdscr):
             state["speed"] = ch - 87
         elif ch == 48: # 0
             state["speed"] = 9
+        elif ch == 10: # ENTER
+            state["started"] = not state["started"]
+        elif ch == 32: # SPACE
+            state["lanechange"] = not state["lanechange"]
+
 
         render(stdscr, x, y, state)
 
