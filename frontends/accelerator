@@ -3,7 +3,9 @@
 import time
 import curses
 
-CONTENT = "  %s  "
+"""A curses GUI for controlling and vizualizing a slotcar via Laser Drift."""
+
+BLOCKSIZE = 6
 MAX_SPEED = 15
 
 def init_gradient():
@@ -17,26 +19,28 @@ def set_background(stdscr):
     stdscr.bkgdset(" ", curses.color_pair(17))
 
 def block(stdscr, x, y, n, speed):
+    """Render a block to the window..."""
     for l in range(0, 3):
-        if n == speed:
-            content = CONTENT % ((str(n + 1).zfill(2)) if l == 1 else "  ")
+        if n == speed and l == 1:
+            content = str(n + 1).zfill(2)
         else:
-            content = CONTENT % "  "
+            content = ""
 
         color = curses.color_pair(18 if n > speed else (n + 1))
 
         stdscr.addstr(y + l,
-                      x + (n * len(CONTENT)),
-                      content,
+                      x + (n * BLOCKSIZE),
+                      content.center(BLOCKSIZE),
                       color)
 def toggle(stdscr, x, y, name, on=False):
+    """Render an on/off toggle to the window."""
     for n in range(0, 3):
-        stdscr.addstr(y + n, x, "".rjust(12, " "), curses.color_pair(18))
+        stdscr.addstr(y + n, x, "".rjust(BLOCKSIZE * 2), curses.color_pair(18))
 
     for n in range(0, 3):
         content = name if n == 1 else ""
-        offset = 6 if on else 0
-        stdscr.addstr(y + n, x + offset, content.center(6, " "), curses.color_pair(19))
+        offset = BLOCKSIZE if on else 0
+        stdscr.addstr(y + n, x + offset, content.center(BLOCKSIZE), curses.color_pair(19))
 
 def render(stdscr, x, y, state):
     stdscr.clear()
@@ -57,7 +61,7 @@ def main(stdscr):
 
     stdscr.clear()
 
-    x = int(curses.COLS / 2) - (int(len(CONTENT)) * 8)
+    x = int(curses.COLS / 2) - (BLOCKSIZE * 8)
     y = int(curses.LINES / 2) - 1
     state = {
         "started": False,
@@ -86,7 +90,6 @@ def main(stdscr):
             state["started"] = not state["started"]
         elif ch == 32: # SPACE
             state["lanechange"] = not state["lanechange"]
-
 
         render(stdscr, x, y, state)
 
