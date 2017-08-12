@@ -1,12 +1,17 @@
 #! /usr/bin/env python
 
-import time
 import curses
+import socket
+import sys
 
 """A curses GUI for controlling and vizualizing a slotcar via Laser Drift."""
 
 BLOCKSIZE = 6
 MAX_SPEED = 15
+
+player = int(sys.argv[1])
+host = sys.argv[2]
+port = int(sys.argv[3])
 
 def init_gradient():
     gradient = [48, 47, 82, 118, 154, 190, 220, 208, 202, 196, 160, 124, 88, 88, 52, 52]
@@ -14,7 +19,7 @@ def init_gradient():
     for i, c in enumerate(gradient):
         curses.init_pair(i + 1, 232, c)
 
-def set_background(stdscr):
+def background(stdscr):
     curses.init_pair(17, 0, 236)
     stdscr.bkgdset(" ", curses.color_pair(17))
 
@@ -51,9 +56,28 @@ def render(stdscr, x, y, state):
     toggle(stdscr, x, y + 5, "RACE", state["started"])
     toggle(stdscr, x + 16, y + 5, "LC", state["lanechange"])
 
+def connect():
+    global sock
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.connect((host, port))
+
+def close():
+    sock.shutdown(socket.SHUT_RDWR)
+    sock.close()
+
+def send(command):
+    sock.sendall(bytes(command, "utf-8"))
+    resp = sock.recv(256)
+
+    if len(resp) > 0:
+        print("> %s" % resp)
+
+    return resp
+
 def main(stdscr):
     init_gradient()
-    set_background(stdscr)
+    background(stdscr)
 
     curses.curs_set(0)
     curses.init_pair(18, 0, 246)
@@ -93,4 +117,13 @@ def main(stdscr):
 
         render(stdscr, x, y, state)
 
-curses.wrapper(main)
+try:
+    connect()
+except:
+    print("Cannot connect to %s:%d" % (host, port))
+    sys.exit(1)
+
+try:
+    curses.wrapper(main)
+finally:
+    close()

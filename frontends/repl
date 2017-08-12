@@ -37,7 +37,7 @@ except:
     sys.exit(1)
 
 try:
-    # Get input
+    # Prompt for input.
     while True:
         command = input("# ")
 
