@@ -9,10 +9,13 @@ import sys
 BLOCKSIZE = 6
 MAX_SPEED = 15
 
-player = int(sys.argv[1])
+if len(sys.argv) < 4:
+    print "Usage: accelerator player [host=localhost] [port=8099]"
+
 host = sys.argv[2]
 port = int(sys.argv[3])
 state = {
+    "player": int(sys.argv[1]),
     "started": False,
     "speed": 0,
     "lanechange": False,
@@ -72,21 +75,24 @@ def close():
     sock.shutdown(socket.SHUT_RDWR)
     sock.close()
 
-def send(command, attempt=1):
+def send(c, attempt=1):
     if attempt > 2:
         raise ConnectionRefusedError()
     else:
-        sock.sendall(bytes(command, "utf-8"))
+        sock.sendall(bytes(c, "utf-8"))
         resp = sock.recv(256)
 
         # Re-establish connection.
         if len(resp) == 0:
             close()
             connect()
-            send(command, attempt+1)
+            send(c, attempt+1)
+
+def command(stub):
+    return "p%d%s" % (state["player"], stub)
 
 def up(ch):
-    if ch == curses.KEY_UP and state["speed"] < MAX_SPEED
+    if ch == curses.KEY_UP and state["speed"] < MAX_SPEED:
         state["speed"] += 1
 
         return "p1s6"
@@ -143,11 +149,11 @@ def main(stdscr):
         if ch == 113: #q
             break
 
-        for c in commands:
-            commmand = c(ch)
+        for f in commands:
+            cmd = f(ch)
 
-            if command:
-                send(command)
+            if cmd:
+                send(cms)
                 render(stdscr, x, y, state)
                 break
 
