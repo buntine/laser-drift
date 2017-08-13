@@ -91,6 +91,36 @@ def up(ch):
 
         return "p1s6"
 
+def down(ch):
+    if ch == curses.KEY_DOWN and state["speed"] > 0:
+        state["speed"] -= 1
+
+        return "p1s6"
+
+def exact(ch):
+    if ch > 48 and ch < 58: # 1 - 9
+        state["speed"] = ch - 49
+    elif ch > 96 and ch < 103: # a - f
+        state["speed"] = ch - 87
+    elif ch == 48: # 0
+        state["speed"] = 9
+    else:
+        return None
+
+    return "p1s6"
+
+def start(ch):
+    if ch == 10: # ENTER
+        state["started"] = not state["started"]
+        
+        return "start"
+
+def lanechange(ch):
+    if ch == 32: # SPACE
+        state["lanechange"] = not state["lanechange"]
+
+        return "p1l1"
+
 def main(stdscr):
     init_gradient()
     background(stdscr)
@@ -103,7 +133,7 @@ def main(stdscr):
 
     x = int(curses.COLS / 2) - (BLOCKSIZE * 8)
     y = int(curses.LINES / 2) - 1
-    commands = [up]
+    commands = [up, down, exact, start, lanechange]
 
     render(stdscr, x, y, state)
 
@@ -112,31 +142,14 @@ def main(stdscr):
 
         if ch == 113: #q
             break
-        else:
-            for c in commands:
-                commmand = c(ch)
 
-                if command:
-                    send(command)
-                    render(stdscr, x, y, state)
-                    break
+        for c in commands:
+            commmand = c(ch)
 
-        if ch == 113: # q
-            break
-        elif ch == curses.KEY_UP and state["speed"] < MAX_SPEED:
-            state["speed"] += 1
-        elif ch == curses.KEY_DOWN and state["speed"] > 0:
-            state["speed"] -= 1
-        elif ch > 48 and ch < 58: # 1 - 9
-            state["speed"] = ch - 49
-        elif ch > 96 and ch < 103: # a - f
-            state["speed"] = ch - 87
-        elif ch == 48: # 0
-            state["speed"] = 9
-        elif ch == 10: # ENTER
-            state["started"] = not state["started"]
-        elif ch == 32: # SPACE
-            state["lanechange"] = not state["lanechange"]
+            if command:
+                send(command)
+                render(stdscr, x, y, state)
+                break
 
 try:
     connect()
