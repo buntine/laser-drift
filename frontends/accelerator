@@ -12,6 +12,11 @@ MAX_SPEED = 15
 player = int(sys.argv[1])
 host = sys.argv[2]
 port = int(sys.argv[3])
+state = {
+    "started": False,
+    "speed": 0,
+    "lanechange": False,
+}
 
 def init_gradient():
     gradient = [48, 47, 82, 118, 154, 190, 220, 208, 202, 196, 160, 124, 88, 88, 52, 52]
@@ -37,6 +42,7 @@ def block(stdscr, x, y, n, speed):
                       x + (n * BLOCKSIZE),
                       content.center(BLOCKSIZE),
                       color)
+
 def toggle(stdscr, x, y, name, on=False):
     """Render an on/off toggle to the window."""
     for n in range(0, 3):
@@ -66,14 +72,24 @@ def close():
     sock.shutdown(socket.SHUT_RDWR)
     sock.close()
 
-def send(command):
-    sock.sendall(bytes(command, "utf-8"))
-    resp = sock.recv(256)
+def send(command, attempt=1):
+    if attempt > 2:
+        raise ConnectionRefusedError()
+    else:
+        sock.sendall(bytes(command, "utf-8"))
+        resp = sock.recv(256)
 
-    if len(resp) > 0:
-        print("> %s" % resp)
+        # Re-establish connection.
+        if len(resp) == 0:
+            close()
+            connect()
+            send(command, attempt+1)
 
-    return resp
+def up(ch):
+    if ch == curses.KEY_UP and state["speed"] < MAX_SPEED
+        state["speed"] += 1
+
+        return "p1s6"
 
 def main(stdscr):
     init_gradient()
@@ -87,16 +103,23 @@ def main(stdscr):
 
     x = int(curses.COLS / 2) - (BLOCKSIZE * 8)
     y = int(curses.LINES / 2) - 1
-    state = {
-        "started": False,
-        "speed": 0,
-        "lanechange": False,
-    }
+    commands = [up]
 
     render(stdscr, x, y, state)
 
     while True:
         ch = stdscr.getch()
+
+        if ch == 113: #q
+            break
+        else:
+            for c in commands:
+                commmand = c(ch)
+
+                if command:
+                    send(command)
+                    render(stdscr, x, y, state)
+                    break
 
         if ch == 113: # q
             break
@@ -114,8 +137,6 @@ def main(stdscr):
             state["started"] = not state["started"]
         elif ch == 32: # SPACE
             state["lanechange"] = not state["lanechange"]
-
-        render(stdscr, x, y, state)
 
 try:
     connect()
