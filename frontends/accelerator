@@ -10,7 +10,7 @@ BLOCKSIZE = 6
 MAX_SPEED = 15
 
 if len(sys.argv) < 4:
-    print "Usage: accelerator player [host=localhost] [port=8099]"
+    print("Usage: accelerator player [host=localhost] [port=8099]")
 
 host = sys.argv[2]
 port = int(sys.argv[3])
@@ -95,13 +95,13 @@ def up(ch):
     if ch == curses.KEY_UP and state["speed"] < MAX_SPEED:
         state["speed"] += 1
 
-        return "p1s6"
+        return command("s%d" % state["speed"])
 
 def down(ch):
     if ch == curses.KEY_DOWN and state["speed"] > 0:
         state["speed"] -= 1
 
-        return "p1s6"
+        return command("s%d" % state["speed"])
 
 def exact(ch):
     if ch > 48 and ch < 58: # 1 - 9
@@ -113,19 +113,19 @@ def exact(ch):
     else:
         return None
 
-    return "p1s6"
+    return command("s%d" % state["speed"])
 
 def start(ch):
     if ch == 10: # ENTER
         state["started"] = not state["started"]
         
-        return "start"
+        return "start" if state["current"] else "stop"
 
 def lanechange(ch):
     if ch == 32: # SPACE
         state["lanechange"] = not state["lanechange"]
 
-        return "p1l1"
+        return command("l1" if state["lanechange"] else "l0")
 
 def main(stdscr):
     init_gradient()
