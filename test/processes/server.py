@@ -181,5 +181,53 @@ class TestServer(unittest.TestCase):
         self.server.q.put.assert_not_called()
         request.sendall.assert_called_with(b"ERR")
 
+    def test_lanechange_a(self):
+        request = self.mock_request("p1l1")
+       
+        handler = s.TCPHandler(request, None, self.server)
+        handler.handle()
+
+        self.server.q.put.assert_called_with({
+            "message": "lanechange",
+            "data": {
+                "player": 1,
+                "value": True,
+            }
+        })
+        request.sendall.assert_called_with(b"OK")
+
+    def test_lanechange_b(self):
+        request = self.mock_request("p2l0")
+       
+        handler = s.TCPHandler(request, None, self.server)
+        handler.handle()
+
+        self.server.q.put.assert_called_with({
+            "message": "lanechange",
+            "data": {
+                "player": 2,
+                "value": False,
+            }
+        })
+        request.sendall.assert_called_with(b"OK")
+
+    def test_lanechange_invalid_player(self):
+        request = self.mock_request("p29l1")
+       
+        handler = s.TCPHandler(request, None, self.server)
+        handler.handle()
+
+        self.server.q.put.assert_not_called()
+        request.sendall.assert_called_with(b"ERR")
+
+    def test_lanechange_invalid_value(self):
+        request = self.mock_request("p2l2")
+       
+        handler = s.TCPHandler(request, None, self.server)
+        handler.handle()
+
+        self.server.q.put.assert_not_called()
+        request.sendall.assert_called_with(b"ERR")
+
 if __name__ == "__main__":
     unittest.main()

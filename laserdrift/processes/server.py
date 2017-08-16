@@ -14,7 +14,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
             r"^stop$": self.__stop,
             r"^p(?P<player>\d)s(?P<speed>\d{1,2})$": self.__speed,
             r"^p(?P<player>\d)s(?P<op>[+-])$": self.__speedinc,
-            r"^p(?P<player>\d)l(?P<status>\d)$": self.__lanechange
+            r"^p(?P<player>\d)l(?P<status>[01])$": self.__lanechange
         }
 
         for o, f in commands.items():
