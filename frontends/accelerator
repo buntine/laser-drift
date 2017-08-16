@@ -66,16 +66,18 @@ def render(stdscr, x, y, state):
     toggle(stdscr, x + 16, y + 5, "LC", state["lanechange"])
 
 def connect():
-    global sock
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.connect((host, port))
 
-def close():
-    sock.shutdown(socket.SHUT_RDWR)
-    sock.close()
+    return sock
 
-def send(c, attempt=1):
+def close(sock):
+    if sock:
+        sock.shutdown(socket.SHUT_RDWR)
+        sock.close()
+
+def send(sock, c, attempt=1):
     if attempt > 2:
         raise ConnectionRefusedError()
     else:
@@ -85,8 +87,10 @@ def send(c, attempt=1):
         # Re-establish connection.
         if len(resp) == 0:
             close()
-            connect()
-            send(c, attempt+1)
+            sock = connect()
+            return send(sock, c, attempt+1)
+
+    return sock
 
 def command(stub):
     return "p%d%s" % (state["player"], stub)
@@ -139,31 +143,32 @@ def main(stdscr):
 
     x = int(curses.COLS / 2) - (BLOCKSIZE * 8)
     y = int(curses.LINES / 2) - 1
+    sock = None
     commands = [up, down, exact, start, lanechange]
 
     render(stdscr, x, y, state)
 
-    while True:
-        ch = stdscr.getch()
+    try:
+        sock = connect()
 
-        if ch == 113: #q
-            break
+        while True:
+            ch = stdscr.getch()
 
-        for f in commands:
-            cmd = f(ch)
-
-            if cmd:
-                send(cms)
-                render(stdscr, x, y, state)
+            if ch == 113: #q
                 break
 
-try:
-    connect()
-except:
-    print("Cannot connect to %s:%d" % (host, port))
-    sys.exit(1)
+            for f in commands:
+                cmd = f(ch)
+
+                if cmd:
+                    sock = send(sock, cms)
+                    render(stdscr, x, y, state)
+                    break
+    finally:
+        close(sock)
 
 try:
     curses.wrapper(main)
-finally:
-    close()
+except ConnectionRefusedError:
+    print("Cannot connect to %s:%d" % (host, port))
+
