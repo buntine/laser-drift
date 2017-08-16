@@ -10,11 +10,11 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
         command = str(self.request.recv(8).strip(), "utf-8")
         commands = {
-            r"start": self.__start,
-            r"stop": self.__stop,
-            r"p(?P<player>\d)s(?P<speed>\d{1,2})": self.__speed,
-            r"p(?P<player>\d)s(?P<op>[+-])": self.__speedinc,
-            r"p(?P<player>\d)l(?P<status>\d)": self.__lanechange
+            r"^start$": self.__start,
+            r"^stop$": self.__stop,
+            r"^p(?P<player>\d)s(?P<speed>\d{1,2})$": self.__speed,
+            r"^p(?P<player>\d)s(?P<op>[+-])$": self.__speedinc,
+            r"^p(?P<player>\d)l(?P<status>\d)$": self.__lanechange
         }
 
         for o, f in commands.items():

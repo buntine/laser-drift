@@ -8,7 +8,7 @@ Laser Drift allows you to control the speed and lane change status of your cars 
 
 Each car that is being controlled by a Laser Drift server is uniquely accessible over the network. This means that applications can communicate with Laser Drift without requiring users to be running a server or have any of Laser Drifts dependencies (or even be in the same building!).
 
-This system acts as a low level interface into a Carrera Digital slot car set and is intended to be used to build higher lever applications.  See the [frontends](#Frontends) section for some examples of things you can do with this system. 
+This system acts as a low level interface into a Carrera Digital slot car set and is intended to be used to build higher lever applications. See the [frontends](#Frontends) section for some examples of things you can do with this system. 
 
 I have some additional details and a technical explanation of the reverse engineering process available [at my blog](http://bunts.io/).
 
@@ -50,12 +50,14 @@ Note, the infrared packets are physically sent and received by [lirc](http://www
 
 ## Frontends
 
-This repo provides two simple frontend applications:
+This repo provides some simple frontend applications that should serve as examples:
 
+  - **accelerator**: A curses GUI for visualizing the acceleration and speed of a player
+    - ```./frontends/accelerator [player=1] [host=localhost] [port=8099]```
   - **repl**: Provides a REPL to send raw commands to a Laser Drift server
-    - ```./scripts/repl [host=localhost] [port=8099]```
+    - ```./frontends/repl [host=localhost] [port=8099]```
   - **keyboard**: A simple keyboard-based controller (node.js)
-    - ```./scripts/keyboard [player] [host=localhost] [port=8099]```
+    - ```./frontends/keyboard [player=1] [host=localhost] [port=8099]```
 
 Other frontends can be built in any programming language that has a networking library (AKA: any language). Some ideas are:
 
