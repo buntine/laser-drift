@@ -176,13 +176,19 @@ A full set of options can be seen by passing the help flag: ```./laserdriftd --h
   - Braking performance should be programmed on your Carrera set to about a 1 or 2. This will prevent the cars from jerking if pulse cycles are missed
   - I programmed my cars at a speed of about 7 - 9. If yu program them all the way up then even a mild speed may send them off the rails. Which is pretty rad, but gets annoying.
 
+## Tests
+
+The test suite can be executed via:
+
+```
+$ ./tests
+```
+
 ## FAQ
 
   - Did you have any help?
     - Yes! The resources available at [SlotBaer](http://www.slotbaer.de) were very important during the reverse engineering process. And Reddit user [byingling](https://www.reddit.com/user/byingling) who helped me with some hardware specifics (and even sent me an old controller!). Also, [David Cristofaro](https://dtcristo.com/) helped me a lot in the first couple of days when I was figuring out how devices like the Carrera race tracks may operate.
   - Why infrared?
     - Because it's much easier to capture and decode signals from devices that emit 38khz IR than devices that operate at 2.4ghz. IR controllers are effectively television remotes. Cheap, off-the-shelf IR transceivers are also much easier to come across. Yes, I suppose I could also have used the wired controllers, but I don't have the depth of knowledge in electrical engineering required to prevent myself from being electrucuted to death.
-  - Where is the test suite?
-    - Honestly, I don't even think I know how to write tests for an application like this. Literally everything important here relies heavily on the outside world.
   - Who did the logo?
     - [Melanie Huang](http://melaniehuang.com/) with the background by [Freepik](http://freepik.com/)
