@@ -74,7 +74,7 @@ def connect():
 
 def close(sock):
     if sock:
-        sock.shutdown(socket.SHUT_RDWR)
+        #sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
 def send(sock, c, attempt=1):
@@ -86,7 +86,7 @@ def send(sock, c, attempt=1):
 
         # Re-establish connection.
         if len(resp) == 0:
-            close()
+            close(sock)
             sock = connect()
             return send(sock, c, attempt+1)
 
@@ -123,7 +123,7 @@ def start(ch):
     if ch == 10: # ENTER
         state["started"] = not state["started"]
         
-        return "start" if state["current"] else "stop"
+        return "start" if state["started"] else "stop"
 
 def lanechange(ch):
     if ch == 32: # SPACE
@@ -161,7 +161,7 @@ def main(stdscr):
                 cmd = f(ch)
 
                 if cmd:
-                    sock = send(sock, cms)
+                    sock = send(sock, cmd)
                     render(stdscr, x, y, state)
                     break
     finally:

@@ -58,6 +58,7 @@ class Race(Process):
         self.q = q
         self.remote = remote
         self.socket = socket
+        self.conn = None
         self.active = False
         self.players = self.__make_players(players)
 
@@ -83,7 +84,8 @@ class Race(Process):
         except KeyboardInterrupt:
             logging.warn("Terminating Race")
         finally:
-            self.conn.close()
+            if self.conn:
+                self.conn.close()
         
     def __find_sync(self) -> bool:
         """Waits for a blast from the lirc process and returns true if it's
