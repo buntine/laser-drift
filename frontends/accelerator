@@ -54,7 +54,8 @@ def toggle(stdscr, x, y, name, on=False):
     for n in range(0, 3):
         content = name if n == 1 else ""
         offset = BLOCKSIZE if on else 0
-        stdscr.addstr(y + n, x + offset, content.center(BLOCKSIZE), curses.color_pair(19))
+        color = 19 if on else 20
+        stdscr.addstr(y + n, x + offset, content.center(BLOCKSIZE), curses.color_pair(color))
 
 def render(stdscr, x, y, state):
     stdscr.clear()
@@ -137,7 +138,8 @@ def main(stdscr):
 
     curses.curs_set(0)
     curses.init_pair(18, 0, 246)
-    curses.init_pair(19, 0, 254)
+    curses.init_pair(19, 2, 254)
+    curses.init_pair(20, 124, 254)
 
     stdscr.clear()
 
