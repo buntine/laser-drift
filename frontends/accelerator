@@ -173,4 +173,3 @@ try:
     curses.wrapper(main)
 except ConnectionRefusedError:
     print("Cannot connect to %s:%d" % (host, port))
-
