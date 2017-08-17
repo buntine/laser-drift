@@ -1,17 +1,12 @@
+import time
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import laserdrift.processes.race as r
+from multiprocessing import Queue
 
-class TestServer(unittest.TestCase):
+class TestRace(unittest.TestCase):
     def setUp(self):
-        self.q = self.mock_queue()
-
-    def mock_queue(self) -> MagicMock:
-        queue = MagicMock()
-        queue.get = MagicMock(return_value={})
-        queue.empty = MagicMock(return_value=True)
-
-        return queue
+        self.q = Queue()
 
     def test_attributes(self):
         race = r.Race(self.q, [1, 2], "remote", "socket")
