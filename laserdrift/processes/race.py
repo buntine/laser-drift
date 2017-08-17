@@ -1,11 +1,10 @@
-from laserdrift.processes.player import Player
-
 import sched
 import time
 import logging
 import lirc
 import re
 from multiprocessing import Process, Queue
+from laserdrift.processes.player import Player
 
 class Race(Process):
     """Executes the main game loop. Listens for syncing pulses from Carrera IR tower

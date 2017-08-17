@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import MagicMock
 import laserdrift.processes.server as s
+from unittest.mock import MagicMock
 
 class TestServer(unittest.TestCase):
     def setUp(self):

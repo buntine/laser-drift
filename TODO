@@ -1,8 +1,8 @@
 - Timing important - should be ordered: 0, 4, 1, 5, 2, 3
-- Ncurses interface frontend: Just use arrow keys to change speed and up/down to lane change
-- Tests? Mock the IR stuff?
 - Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
 
+**- Ncurses interface frontend: Just use arrow keys to change speed and up/down to lane change
+**- Tests? Mock the IR stuff?
 **- Is 9ms correct? Should use sched library?
 **- Deal with Lirc crashing or send command getting "broken pipe" error and "did not receive SYNC" error (possible?)
 **- pPs+ and pPs- commands
