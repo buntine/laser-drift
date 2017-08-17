@@ -5,7 +5,7 @@ import time
 import logging
 import lirc
 import re
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 class Race(Process):
     """Executes the main game loop. Listens for syncing pulses from Carrera IR tower
@@ -16,7 +16,7 @@ class Race(Process):
     WRITE_TIMEOUT = 0.020
     READ_TIMEOUT = 0.8
 
-    def __init__(self, q, players: [int], remote: str, socket: str):
+    def __init__(self, q: Queue, players: [int], remote: str, socket: str):
         Process.__init__(self)
         self.q = q
         self.remote = remote

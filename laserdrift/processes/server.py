@@ -1,7 +1,7 @@
 import re
 import logging
 import socketserver
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 class TCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
@@ -65,7 +65,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
         }
 
 class Server(Process):
-    def __init__(self, queue, port: int, host: str):
+    def __init__(self, queue: Queue, port: int, host: str):
         Process.__init__(self)
         self.q = queue
         self.port = port
