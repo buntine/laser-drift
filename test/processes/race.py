@@ -56,3 +56,6 @@ class TestRace(unittest.TestCase):
         race.run(True)
 
         self.assertEqual(race.handle_message.mock_calls, [call(items[1]), call(items[0])])
+
+if __name__ == "__main__":
+    unittest.main()

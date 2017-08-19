@@ -93,3 +93,6 @@ class TestPlayer(unittest.TestCase):
         v = p1.execute("cheese", 4)
 
         self.assertFalse(v)
+
+if __name__ == "__main__":
+    unittest.main()
