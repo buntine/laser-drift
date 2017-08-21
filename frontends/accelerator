@@ -36,7 +36,7 @@ def block(stdscr, x, y, n, speed):
     """Render a block to the window..."""
     for l in range(0, 3):
         if n == speed and l == 1:
-            content = str(n + 1).zfill(2)
+            content = str(n).zfill(2)
         else:
             content = ""
 
@@ -110,12 +110,10 @@ def down(ch):
         return command("s%d" % state["speed"])
 
 def exact(ch):
-    if ch > 48 and ch < 58: # 1 - 9
-        state["speed"] = ch - 49
+    if ch > 47 and ch < 58: # 0 - 9
+        state["speed"] = ch - 48
     elif ch > 96 and ch < 103: # a - f
         state["speed"] = ch - 87
-    elif ch == 48: # 0
-        state["speed"] = 9
     else:
         return None
 
