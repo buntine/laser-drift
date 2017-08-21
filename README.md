@@ -68,6 +68,7 @@ Other frontends can be built in any programming language that has a networking l
   - Voice-controlled racing
   - Tap Racer: The more you press, the faster you drive
   - Type Racer: You must type out a paragraph and the car travels relative to your words-per-minute
+  - Web-based racing. Two remote players race and watch the track via streaming webcam
   - Race with hand gestures using a [Leap Motion](https://www.leapmotion.com/)
   - Do a lap every time someone tweets about your favourite topic
 
