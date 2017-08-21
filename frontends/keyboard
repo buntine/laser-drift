@@ -15,19 +15,24 @@ const SPEED_KEYS = ['0', '1', '2', '3', '4', '5', '6', '7',
 var args = process.argv.slice(2);
 
 if (args.length < 1) {
-  console.log('Usage: keyboard player [host] [port]');
+  console.log('Usage: keyboard [player=1] [host=localhost] [port=8099]');
   process.exit(1);
-} else {
-  console.log("Control your player with your keyboard.\n\nSPACE    Start/Stop\n(1 - f)  Speed\nl        Lane change toggle\n")
 }
 
 const state = {
   started: false,
   lanechange: false,
-  player: parseInt(args[0]),
+  player: args[0] ? parseInt(args[0]) - 1 : 0,
   host: args[1] || 'localhost',
   port: args[2] ? parseInt(args[2]) : 8099
 };
+
+if (state.player < 0 || state.player > 3) {
+  console.log("Player must be between 1 and 4");
+  process.exit(1);
+}
+
+console.log("Control your player with your keyboard.\n\nSPACE    Start/Stop\n(1 - f)  Speed\nl        Lane change toggle\n")
 
 function send(command) {
   client.connect(state.port, state.host, function(){

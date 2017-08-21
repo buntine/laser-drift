@@ -1,6 +1,6 @@
 - Timing important - should be ordered: 0, 4, 1, 5, 2, 3
-- Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
 
+**- Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)
 **- How to mock private methods? And then make Race.lirc_conn and Race.handle_message private again.
 **- Why do cars lights flash? What is pattern? (Answer: Out of fuel!)
 **- Ncurses interface frontend: Just use arrow keys to change speed and up/down to lane change

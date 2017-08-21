@@ -22,7 +22,7 @@ The main Laser Drift system is comprised of two processes:
 A server and game loop can be spun up using the `laserdriftd` program. In this case we are starting a server on localhost:8099 that will send data packets for players 1 and 2:
 
 ```
-$ ./laserdriftd --port=8099 --p1 --p2 --socket="/usr/local/var/run/lirc/lircd"
+$ ./laserdriftd --port=8099 --p0 --p1 --socket="/usr/local/var/run/lirc/lircd"
 ```
 
 See the [Installation](#user-content-installation) section for more information.
@@ -58,6 +58,8 @@ This repo provides some simple frontend applications that should serve as exampl
     - ```./frontends/repl [host=localhost] [port=8099]```
   - **keyboard**: A simple keyboard-based controller (node.js)
     - ```./frontends/keyboard [player=1] [host=localhost] [port=8099]```
+
+**Note**: In Laser Drift itself, players start at zero. So player #1 is 0, etc. The frontend apps (except for ```repl```) start the players at 1.
 
 Other frontends can be built in any programming language that has a networking library (AKA: any language). Some ideas are:
 
@@ -163,7 +165,7 @@ And sending:
 Laser Drift can now be started:
 
 ```
-$ ./laserdriftd --host=192.168.1.1 --daemon --logfile="/var/log/laserdriftd.log" --port=8080 --p1 --p3  
+$ ./laserdriftd --host=192.168.1.1 --daemon --logfile="/var/log/laserdriftd.log" --port=8080 --p0 --p2  
 ```
 
 By default, `laserdriftd` will not run as a daemon and will simply log to STDOUT. It can be stopped via ```Ctrl+c```. When running as a daemon, you can kill `laserdriftd` by sending a `SIGINT` signal to the main process: ```$ kill -2 <pid>```
@@ -175,10 +177,10 @@ The full options supported by `laserdrift` are:
   - `--host=HOST`: Host name to run TCP server on [default: localhost]
   - `--port=PORT`: TCP port to listen on [default: 8099]
   - `--logfile=PATH`: The path to a file to log output to [default: STDOUT]
+  - `--p0`: Activate Player #0
   - `--p1`: Activate Player #1
   - `--p2`: Activate Player #2
   - `--p3`: Activate Player #3
-  - `--p4`: Activate Player #4
 
 The full set of options can be seen by passing the help flag: ```./laserdriftd --help```.
   
