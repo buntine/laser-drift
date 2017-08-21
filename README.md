@@ -4,11 +4,11 @@
 
 Laser Drift is a collection of tools that allow you to remotely control your [Carrera Digital 132/124](http://www.carrera-toys.com/en/) race track by emulating the infrared wireless controllers for between one and four players simultaneously.
 
-Laser Drift allows you to control the speed and lane change status of your cars in realtime via a simple language sent over TCP. It will also abstract away the messiness involved in tasks like reverse-engineering infrared signals, identifying individual players and syncing with the IR tower.
+Laser Drift allows you to control the speed and lane change status of your cars in realtime via a simple language sent over TCP. It will also abstract away the messiness involved in tasks like reverse engineering infrared signals, identifying individual players and syncing with the IR tower.
 
 Each car that is being controlled by a Laser Drift server is uniquely accessible over the network. This means that applications can communicate with Laser Drift without requiring users to be running a server or have any of Laser Drifts dependencies (or even be in the same building!).
 
-This system acts as a low level interface into a Carrera Digital slot car set and is intended to be used to build higher lever applications. See the [frontends](#Frontends) section for some examples of things you can do with this system. 
+This system acts as a low level interface into a Carrera Digital slot car set and is intended to be used to build higher lever applications. See the [frontends](#user-content-frontends) section for some examples of things you can do with this system. 
 
 I have some additional details and a technical explanation of the reverse engineering process available [at my blog](http://bunts.io/).
 
@@ -25,7 +25,7 @@ A server and game loop can be spun up using the `laserdriftd` program. In this c
 $ ./laserdriftd --port=8099 --p1 --p2 --socket="/usr/local/var/run/lirc/lircd"
 ```
 
-See the [Installation](#Installation) section for more information.
+See the [Installation](#user-content-installation) section for more information.
 
 ### Commands
 
@@ -166,17 +166,27 @@ Laser Drift can now be started:
 $ ./laserdriftd --host=192.168.1.1 --daemon --logfile="/var/log/laserdriftd.log" --port=8080 --p1 --p3  
 ```
 
-By default, `laserdriftd` will not run as a daemon and will simply log to STDOUT.
+By default, `laserdriftd` will not run as a daemon and will simply log to STDOUT. It can be stopped via ```Ctrl+c```. When running as a daemon, you can kill `laserdriftd` by sending a `SIGINT` signal to the main process: ```$ kill -2 <pid>```
 
-You can kill `laserdriftd` by sending a `SIGINT` signal to the main process: ```$ kill -2 <pid>```
+The full options supported by `laserdrift` are:
 
-A full set of options can be seen by passing the help flag: ```./laserdriftd --help```.
+  - `-d`, `--daemon`: Daemonise the laserdriftd process
+  - `--socket=PATH`: Location of the lircd socket [default: /var/run/lirc/lircd]
+  - `--host=HOST`: Host name to run TCP server on [default: localhost]
+  - `--port=PORT`: TCP port to listen on [default: 8099]
+  - `--logfile=PATH`: The path to a file to log output to [default: STDOUT]
+  - `--p1`: Activate Player #1
+  - `--p2`: Activate Player #2
+  - `--p3`: Activate Player #3
+  - `--p4`: Activate Player #4
+
+The full set of options can be seen by passing the help flag: ```./laserdriftd --help```.
   
 ### Recommendations
 
   - Reduce light pollution. Have the IR tower and USB IR device in a low-light environment (like hidden in a box somewhere)
   - Braking performance should be programmed on your Carrera set to about a 1 or 2. This will prevent the cars from jerking if pulse cycles are missed
-  - I programmed my cars at a speed of about 7 - 9. If yu program them all the way up then even a mild speed may send them off the rails. Which is pretty rad, but gets annoying.
+  - I programmed my cars at a speed of about 7 - 9. If you program them all the way up then even a mild speed may send them off the rails. That is pretty rad, but it gets annoying.
 
 ## Tests
 
