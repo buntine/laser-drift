@@ -1,6 +1,6 @@
 import unittest
 import laserdrift.processes.race as r
-from unittest.mock import MagicMock, Mock, call
+from unittest.mock import MagicMock, Mock, call, patch
 from multiprocessing import Queue
 
 class TestRace(unittest.TestCase):
@@ -50,12 +50,13 @@ class TestRace(unittest.TestCase):
 
         q = self.mock_queue(items)
         race = r.Race(q, [1, 2], "remote", "socket")
-        race.lirc_conn = self.mock_lirc("000000001 SYNC remote")
-        race.handle_message = MagicMock()
+ 
+        with patch.object(race, '_Race__lirc_conn', return_value=self.mock_lirc("0000001 SYNC remote")) as lc_method:
+            with patch.object(race, '_Race__handle_message', return_value=MagicMock()) as hm_method:
+                race.run(True)
 
-        race.run(True)
-
-        self.assertEqual(race.handle_message.mock_calls, [call(items[1]), call(items[0])])
+                self.assertEqual(hm_method.mock_calls, [call(items[1]), call(items[0])])
+                lc_method.assert_called_once()
 
 if __name__ == "__main__":
     unittest.main()

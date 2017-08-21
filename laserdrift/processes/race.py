@@ -28,7 +28,7 @@ class Race(Process):
 
     def run(self, debug=False):
         try:
-            self.conn = self.lirc_conn();
+            self.conn = self.__lirc_conn();
 
             while True:
                 if self.active and self.__find_sync():
@@ -42,7 +42,7 @@ class Race(Process):
 
                 # Apply state changes as per requests from TCP server.
                 while not self.q.empty():
-                    self.handle_message(self.q.get(False))
+                    self.__handle_message(self.q.get(False))
 
                 if debug:
                     break
@@ -64,7 +64,7 @@ class Race(Process):
             logging.warn("Did not receive SYNC from %s, skipping." % self.remote)
             return False
 
-    def handle_message(self, msg: str):
+    def __handle_message(self, msg: str):
         """Parse command and attempt to update state of game and/or player."""
         command = msg["message"]
 
@@ -102,7 +102,7 @@ class Race(Process):
         except BrokenPipeError:
             logging.info("Refreshing lirc connection")
             self.conn.close()
-            self.conn = self.lirc_conn()
+            self.conn = self.__lirc_conn()
 
-    def lirc_conn(self) -> lirc.client.AbstractConnection:
+    def __lirc_conn(self) -> lirc.client.AbstractConnection:
         return lirc.CommandConnection(socket_path=self.socket)
