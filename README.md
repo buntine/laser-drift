@@ -46,20 +46,22 @@ The commands are:
   - **pPs-**: Decrement player *P*'s speed by 1 (if possible)
   - **pPlL**: Set player *P*'s lane change status to *L*
 
-Note, the infrared packets are physically sent and received by [lirc](http://www.lirc.org/), which must be running in order for Laser Drift to successfully initialize. The full list of software and hardware dependencies is listed in the [What you need](#Whatyouneed) section below.
+So, for example, setting player #1 to speed 8 is represented as `p0s8` and turning on lane change for player #3 is represented as `p2l1`.
+
+Note, the infrared packets are physically sent and received by [lirc](http://www.lirc.org/), which must be running in order for Laser Drift to successfully initialize. The full list of software and hardware dependencies is listed in the [What you need](#user-content-what-you-need) section below.
 
 ## Frontends
 
 This repo provides some simple frontend applications that should serve as examples:
 
   - **accelerator**: A curses GUI for visualizing the acceleration and speed of a player
-    - ```./frontends/accelerator [player=1] [host=localhost] [port=8099]```
+    - `./frontends/accelerator [player=1] [host=localhost] [port=8099]`
   - **repl**: Provides a REPL to send raw commands to a Laser Drift server
-    - ```./frontends/repl [host=localhost] [port=8099]```
+    - `./frontends/repl [host=localhost] [port=8099]`
   - **keyboard**: A simple keyboard-based controller (node.js)
-    - ```./frontends/keyboard [player=1] [host=localhost] [port=8099]```
+    - `./frontends/keyboard [player=1] [host=localhost] [port=8099]`
 
-**Note**: In Laser Drift itself, players start at zero. So player #1 is 0, etc. The frontend apps (except for ```repl```) start the players at 1.
+**Note**: The frontend apps (except `repl`) represent players with 1-4 instead of 0-3.
 
 Other frontends can be built in any programming language that has a networking library (AKA: any language). Some ideas are:
 
@@ -120,8 +122,8 @@ nodaemon        = False
 Once installed, you can test that lirc is receiving data by starting a `lircd` process and using the `mode2` binary:
 
   - Plug in your USB IR transceiver
-  - Start lirc: ```$ sudo lircd --nodaemon```
-  - Print raw data: ```$ mode2```
+  - Start lirc: `$ sudo lircd --nodaemon`
+  - Print raw data: `$ mode2`
   - Point a TV remove at the device and press some buttons (using the Carrera IR controllers will not work unless the IR tower is in range and turned on as they only emit IR if they are receiving syncing blasts from it)
   - You should see a raw stream of pulses and spaces caught by your device and sent to lirc for processing
   - Lirc (latest - maybe from source)
@@ -152,12 +154,12 @@ And then restart lirc.
 Now you can test your receiving:
 
   - Point your IR tower at your IR transceiver
-  - ```$ irw```
-  - You should see something like ```00000000001 carrera SYNC``` as lirc interprets the input
+  - `$ irw`
+  - You should see something like `00000000001 carrera SYNC` as lirc interprets the input
 
 And sending:
 
-  - ```$ irsend SEND_ONCE carrera SYNC```
+  - `$ irsend SEND_ONCE carrera SYNC`
   - You should see the lights on your transceiver flash a couple of times
 
 ### Laser Drift server
@@ -168,7 +170,7 @@ Laser Drift can now be started:
 $ ./laserdriftd --host=192.168.1.1 --daemon --logfile="/var/log/laserdriftd.log" --port=8080 --p0 --p2  
 ```
 
-By default, `laserdriftd` will not run as a daemon and will simply log to STDOUT. It can be stopped via ```Ctrl+c```. When running as a daemon, you can kill `laserdriftd` by sending a `SIGINT` signal to the main process: ```$ kill -2 <pid>```
+By default, `laserdriftd` will not run as a daemon and will simply log to STDOUT. It can be stopped via `Ctrl+c`. When running as a daemon, you can kill `laserdriftd` by sending a `SIGINT` signal to the main process: `$ kill -2 <pid>`.
 
 The full options supported by `laserdrift` are:
 
@@ -182,7 +184,7 @@ The full options supported by `laserdrift` are:
   - `--p2`: Activate Player #2
   - `--p3`: Activate Player #3
 
-The full set of options can be seen by passing the help flag: ```./laserdriftd --help```.
+The full set of options can be seen by passing the help flag: `./laserdriftd --help`.
   
 ### Recommendations
 
