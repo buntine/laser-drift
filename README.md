@@ -68,7 +68,7 @@ Other frontends can be built in any programming language that has a networking l
   - Voice-controlled racing
   - Tap Racer: The more you press, the faster you drive
   - Type Racer: You must type out a paragraph and the car travels relative to your words-per-minute
-  - Web-based racing. Two remote players race and watch the track via streaming webcam
+  - Web-based racing: Two remote players race and watch the track via streaming webcam
   - Race with hand gestures using a [Leap Motion](https://www.leapmotion.com/)
   - Do a lap every time someone tweets about your favourite topic
 
@@ -180,10 +180,10 @@ The full options supported by `laserdrift` are:
   - `--host=HOST`: Host name to run TCP server on [default: localhost]
   - `--port=PORT`: TCP port to listen on [default: 8099]
   - `--logfile=PATH`: The path to a file to log output to [default: STDOUT]
-  - `--p0`: Activate Player #0
-  - `--p1`: Activate Player #1
-  - `--p2`: Activate Player #2
-  - `--p3`: Activate Player #3
+  - `--p0`: Activate Player #1
+  - `--p1`: Activate Player #2
+  - `--p2`: Activate Player #3
+  - `--p3`: Activate Player #4
 
 The full set of options can be seen by passing the help flag: `./laserdriftd --help`.
   

@@ -25,11 +25,11 @@ parser.add_option("-l", "--logfile", dest="logfile", default=None,
 parser.add_option("--p0", action="append_const", const=0, dest="players",
                   help="Player #1 is active")
 parser.add_option("--p1", action="append_const", const=1, dest="players",
-                  help="Player #1 is active")
-parser.add_option("--p2", action="append_const", const=2, dest="players",
                   help="Player #2 is active")
-parser.add_option("--p3", action="append_const", const=3, dest="players",
+parser.add_option("--p2", action="append_const", const=2, dest="players",
                   help="Player #3 is active")
+parser.add_option("--p3", action="append_const", const=3, dest="players",
+                  help="Player #4 is active")
 
 (opts, _) = parser.parse_args()
 

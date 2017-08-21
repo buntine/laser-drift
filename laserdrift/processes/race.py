@@ -12,7 +12,7 @@ class Race(Process):
        server process."""
 
     DELAY = 0.009
-    WRITE_TIMEOUT = 0.020
+    WRITE_TIMEOUT = 0.028
     READ_TIMEOUT = 0.8
 
     def __init__(self, q: Queue, players: [int], remote: str, socket: str):
