@@ -79,18 +79,86 @@ space 250
 pulse 250
 ```
 
+At the suggestion of a friend, I wrote a little script to visualise this with a step graph where a pulse is high and a space is low.
+
 I performed this test a bunch of times. I could see that the transmission repeated every ~60 ms. And it always started with a pulse of 300 followed by a space of either 750 or 1000. This was definitely the start bit, which told the control unit that the blast was coming from a controller. And following the start bit was a series of pulses and spaces that were always either `250`μs or `500`μs.
 
 From consulting the work of Stephan Heß I knew that Carrera controllers used [Manchester Coding]() to encode their data packets. In Manchester Coding, a bit is represented as a transition from either low-to-high or high-to-low. Specifically, `1` is encoded as a pulse of **N**μs followed by a space of **N**μs. And `0` is encoded as a space of **N**μs followed by a pulse of **N**μs.
 
 As we can see, in our case `N = 250`. So each bit required exactly 500μs. Summing the numbers together (minus the start bit) we get `4000`. And `4000 / 500 = 8`. So the data packet consisted of a start bit followed by one byte of data.
 
-Again, consulting the work of Stephan Heß, which by this point had saved me many hours, I was able to confirm the structure of the data packet sent by each controller. I've visualised it below.
+Again, consulting the work of Stephan Heß, which by this point had saved me many hours, I was able to confirm the structure of the data packet sent by each controller. Each controller sent the start bit, followed by two bits representing the player, four bits for the speed and a bit to indicate whether the lane-change button was pressed. There was also a trailing bit that seemed to be used to represent more players. I assume it was added to the end for backwards compatibility with older models.
+
+I've visualised it below.
 
 PICTURE
 
-### Encoding example
-### Success. Car moved.
+As an example, let's suppose we were player #3 travelling at speed 7 with the lane change button pressed. Our 8 bits would look something like this:
+
+```
+10011110
+```
+
+To encode these bits into pulses and spaces we can first add the start bit:
+
+```
+pulse 300
+space 750
+```
+
+And then we start adding in each bit. Remember that bits in Manchested Coding are represented as a transition. So let's add the 1 (a pulse followed by space):
+
+```
+pulse 300
+space 750
+pulse 250
+space 250
+```
+
+So far so good. Let's add the next bit, a 0 (a space followed by a pulse):
+
+```
+pulse 300
+space 750
+pulse 250
+space 250
+space 250
+pulse 250
+```
+
+Uh-oh! Now we have two spaces in a row. We can fix this by simply merging them into one, longer space:
+
+```
+pulse 300
+space 750
+pulse 250
+space 500
+pulse 250
+```
+
+Cool. Every time we see a 0->1 or a 1->0, we are going to merge one end with the other to produce a pulse or a space of 500μs. Now let's add in the rest of the bits:
+
+```
+pulse 300
+space 750
+pulse 250 # 1
+space 500 # 0
+pulse 250
+space 250 # 0
+pulse 500 # 1
+space 250
+pulse 250 # 1
+space 250
+pulse 250 # 1
+space 250
+pulse 250 # 1
+space 500 # 0
+pulse 250
+```
+
+And that's it. Visualised, the data packet is very similar to the one I showed above. You should be able to see the difference between the 250μs and 500μs bursts.
+
+PICTURE
 
 ## Solution: Laser Drift
 
