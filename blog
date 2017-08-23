@@ -39,10 +39,26 @@ One additional curve ball was thrown my way when I took a closer look at the con
 
 ## Reverse Engineering
 
-The IR transceiver I purchased was the [Irdroid](http://www.irdroid.com/). Interestingly, it's handmade in Bulgaria in repurposed SD card readers. The reason I chose this device was because it's supported out of the box by the predominant infrared tool suite for Linux environments, [Lirc](http://lirc.org). LIRC is a package that allows you to decode and send infra-red signals of many (but not all) commonly used remote controls. A full introduction to it is beyond the scope of this article, but knowing the internals is not necessary for now.
+The IR transceiver I purchased was the [Irdroid](http://www.irdroid.com/). Interestingly, it's handmade in Bulgaria in repurposed SD card readers. The reason I chose this device was because it's supported out of the box by the predominant infrared tool suite for Linux environments, [Lirc](http://lirc.org). LIRC is a package that allows you to decode and send infra-red signals of many (but not all) commonly used remote controls. A full introduction to it is beyond the scope of this article, but it's sufficient to just know that lirc gives you the ability to send and receive IR blasts in a Linux environment.
 
-# plugged in, started recording with lirc, pointed controller. Nothing...
-# Need syncing blasts from tower.
+An important part of reverse engineering is to take small steps. Try to get a general idea of how the device works before trying to reach the end goal. For me, the first port of call was to see what the information coming from the controllers looked like. To do this, I used a low-level tool that lirc provides called [mode2](https://linux.die.net/man/1/mode2) that listens for raw IR data and prints it to `STDOUT`. Let me explain what IR data looks like.
+
+Infrared devices typically encode their message to the receiver via a method called Pulse Code Modulation (PCM) in which an IR-emitting LED is switched on and off rapidly. When the transmitter is "off", we call it a space. And when the transmitter is "on", we call it a pulse. There are a few common methods for encoding binary into pulses and spaces, but all involve transitioning between pulses and spaces.
+
+In my case, I expected to see a random looking series of pulses and spaces being printed to `STDOUT`. But, I got nothing. No matter what I did, I could not get any output from the controller. I spent the next hour troubleshooting why the Carrera control unit could pick up on the IR data but I couldn't. It wasn't until I pointed my IR receiver a the control unit itself that I realised there was more to the story.
+
+The control unit (well, technically the IR receiver on the unit) was actually sending out the following signals every ~70 milliseconds:
+
+```
+pulse 800
+space 700
+pulse 550
+```
+
+The numbers are microseconds. What we are seeing here is a pulse of 800μs, a space of 700μs and then a pulse of 550μs. This was repeated ad infinitum.
+
+As it turns out, the controllers only respond when they are instructed to by the control unit. Pressing the button does not actually cause an IR transmission. It just updates some state on the microcontroller in the controller itself. This is important for synchronising the controllers so that their transmissions do not get tangled on the receiving end. 
+
 # Ok, recorded. Got: 750 250 250 ......
 # show structure
 , etc, etc, etc.
