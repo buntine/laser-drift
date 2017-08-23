@@ -204,7 +204,7 @@ $ ./tests
 ## FAQ
 
   - Did you have any help?
-    - Yes! The resources available at [SlotBaer](http://www.slotbaer.de) were very important during the reverse engineering process. And Reddit user [byingling](https://www.reddit.com/user/byingling) who helped me with some hardware specifics (and even sent me an old controller!). Also, [David Cristofaro](https://dtcristo.com/) helped me a lot in the first couple of days when I was figuring out how devices like the Carrera race tracks may operate.
+    - Yes! The resources available from Stephan Heß at [SlotBaer](http://www.slotbaer.de) were very important during the reverse engineering process. Without Stephan, this project would have been much, much more difficult. And Reddit user [byingling](https://www.reddit.com/user/byingling) who helped me with some hardware specifics (and even sent me an old controller!). Also, [David Cristofaro](https://dtcristo.com/) helped me a lot in the first couple of days when I was figuring out how devices like the Carrera race tracks may operate.
   - Why infrared?
     - Because it's much easier to capture and decode signals from devices that emit 38khz IR than devices that operate at 2.4ghz. IR controllers are effectively television remotes. Cheap, off-the-shelf IR transceivers are also much easier to come across. Yes, I suppose I could also have used the wired controllers, but I don't have the depth of knowledge in electrical engineering required to prevent myself from being electrucuted to death.
   - Who did the logo?

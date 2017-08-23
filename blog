@@ -1,0 +1,52 @@
+A couple of months ago I was in a brainstorming meeting with the Creative Director, the Head of Strategy and an assortment of other tech people. This is a volatile melting pot of skills that in the past has produced many amazing things (and the odd Frankenstein). Our client had tasked us with "doing something awesome with one of [those BCI devices]()". For those unaware, **B**rain-**C**omputer **I**nterface devices measure electrical activity in the brain and provide an SDK for performing computations based on simple thoughts, emotions and physical gestures.
+
+These open briefs are generally great, but it can be difficult to come up with a viable idea that satisfies everyones concept of what constitutes awesomeness and (God forbid) fits within the proposed budget.
+
+We eventually settled upon the idea of **brain powered [slot car]() racing**, in which a user would think certain thoughts like "push" in order to make the cars move. So, in a nutshell, two to four players would race against each other and the first player to *n* laps would win. This idea satisfied a few pre-requisites - most importantly it would allow users to interact with the physical world. The client, perhaps correctly, felt that it would be more impressive if the BCI device was able to move physical objects opposed to digital ones.
+
+To me, this idea was actually two separate projects: 
+
+  - BCI -> PC: Software to pick up on mental commands like "push"
+  - PC -> Slot Cars: Software to accurately control up to four players on a slot car set
+
+In this post I will discuss the latter as it is by far the most interesting and challenging of the two. The project manifested itself in three phases, and so I've broken this post into three sections:
+
+  - [Research and Experimentation]()
+  - [Reverse Engineering]()
+  - [Solution: Laser Drift]()
+
+## Research and Experimentation
+
+The only experience my colleagues and I had with slot cars were distant childhood memories of analogue cars zipping around single-lane tracks. And so the first task at hand was to find out what a state of the art slot car set looked like in 2017.
+
+The first thing to decide was which slot car manufacturer we would go with. As it turns out, there are two main players in the slot car world: [Scaletric]() and [Carrera](). The general sentiment among enthusiasts is that Scaletric is for the older, hobbyist demographic whilst Carrera is for the younger crowd who just want to have some fun. But both options are of a very high quality.
+
+After some looking around, I found that Carrera offered a bluetooth interface called the [AppConnect](http://www.carrera-toys.com/en/products/digital-132/accessories/appconnect-538/) that would allow one to program car speeds, fuel levels (yes, that's a thing now) and various other tasks. One Thomas Kemmer had also released [Python bindings](https://github.com/tkem/carreralib) into the underlying protocol, whch meant I would easily whip up a python program to control the cars. I was starting to think this whole thing may be much easier than I initially thought...
+
+Oh, ignorance is bliss. My elation was quickly extinguished when I realised that by "programming car speeds", Carrera had meant that the bluetooth interface can be used to **pre-program** cars with individual top speeds before a race. It's of no use *during* a race! Alas, we ordered a new [Carrera Digital 132 GT Championship Wireless+]() set and the bluebooth adapter regardless. This particular set came with wireless controllers, which communicated with the control unit on the track via infrared (alteast, that is what I had read). 
+
+At this point I realised that there was no official way of using a PC to control each car in realtime. And so we hit the drawing board.
+
+The first idea was to physically press the accelerator on the [controllers](http://www.carrera-toys.com/fileadmin/user_upload/products/acc/zubehoehr_42012_.jpg) using something like a [linear actuator](https://www.motiondynamics.com.au/images/magictoolbox_cache/80543c918ed05ba09145ba56f4b3651f/3/0/30444/original/3335263249/50_light_industrial_jqjh-k3.jpg). The controllers themselves would be housed in a chassis of some kind and we'd use a hobbyist microprocessor like an arduino to press each controller when desired. If you watch the first 20 seconds of [this video](https://www.youtube.com/watch?v=gnLSE44leyU) it should be obvious how this may work. This would have the benefit of not requiring us to open the hood of the Carrera set and just emulate the pressing of a thumb. But it required a whole bunch of additional hardware for each controller and some specialised skills that noone on the project professed to have. It also didn't give us the accuracy we were really after as the actuators we found were very slow.
+
+The next idea was to reverse engineer the controllers infrared signals. We could emulate the entire array of controllers as long as we could send the right data packets at the right time. I mean, the controllers are basically like really simple TV remotes, right? This would require some hardware aswell, but atleast there would be no soldering involved.
+
+I did some additional research online and I was able to find [some brialliant work](http://www.slotbaer.de/index.php/carrera-digital-124-132/13-d132-d124-infrarot-regler-protokoll) by Stephan Heß in which he showed the basic contents of the infrared packets sent by the controllers. This meant that we already had some of the reverse engineering completed for us. And I already knew that cheap USB-based IR transceivers like [this one from Irdroid](http://www.irdroid.com/wp-content/uploads/2013/11/IMG_0586-Small.jpg) were readily available.
+
+So it was decided: **We would use an infrared transceiver to emulate the data sent by the controllers to the control unit. One simple device would act as all of the controllers.**
+
+One additional curve ball was thrown my way when I took a closer look at the controllers we had. They were not the 38khz IR controllers I had read about but actually 2.4ghz RF! This was going to make communication a whole lot more difficult. As it turns out, the IR controllers were decommissioned in 2013 and replaced with the superior RF models. Luckily, it seemed that the new control units still supported the older controllers. So I got en ebay and bought the [older controllers](http://www.professormotor.com/v/vspfiles/photos/CAR10103-2.jpg) that I wanted.
+
+## Reverse Engineering
+
+The IR transceiver I purchased was the [Irdroid](http://www.irdroid.com/). Interestingly, it's handmade in Bulgaria in repurposed SD card readers. The reason I chose this device was because it's supported out of the box by the predominant infrared tool suite for Linux environments, [Lirc](http://lirc.org). LIRC is a package that allows you to decode and send infra-red signals of many (but not all) commonly used remote controls. A full introduction to it is beyond the scope of this article, but knowing the internals is not necessary for now.
+
+# plugged in, started recording with lirc, pointed controller. Nothing...
+# Need syncing blasts from tower.
+# Ok, recorded. Got: 750 250 250 ......
+# show structure
+, etc, etc, etc.
+
+## Solution: Laser Drift
+
+Pass.
