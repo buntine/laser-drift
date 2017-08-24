@@ -1,9 +1,17 @@
 ---
-title: Laser Drift: Reverse engineering slot cars for fun and (no) profit!
+title: "Laser Drift: Reverse engineering slot cars for fun and (no) profit!"
 published: false
 description: An in-depth look at the reverse engineering of a popular Slot Car set.
 tags: reverse-engineering, hacking, python, fun
 ---
+
+**In this blog series I discuss the creation of [Laser Drift](https://github.com/buntine/laser-drift), a collection of tools that allow you to remotely control your Carrera Digital 132/124 race track by emulating the infrared wireless controllers for between one and four players simultaneously.**
+
+**Feel free to take a look at my promo video before you read.**
+
+{% youtube WsgaB_ByTto %}
+
+## Motivation
 
 A couple of months ago I was in a brainstorming meeting with the Creative Director, the Head of Strategy and an assortment of other tech people. This is a volatile melting pot of skills that in the past has produced many amazing things (and the odd Frankenstein). Our client had tasked us with "doing something awesome with one of [those BCI devices](https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface)". For those unaware, **B**rain-**C**omputer **I**nterface devices measure electrical activity in the brain and provide an SDK for performing computations based on simple thoughts, emotions and physical gestures.
 
@@ -18,11 +26,12 @@ To me, this idea actually involved two separate projects:
 
 In this post I will discuss the latter as it is by far the most interesting and challenging of the two. The project manifested itself in three phases. In this post I will discuss the first two phases:
 
-  - [Research and Experimentation]()
-  - [Reverse Engineering]()
+  - [Research and Experimentation](#research)
+  - [Reverse Engineering](#reverse)
 
-In a separate post I will discuss the creation of the solution itself: Laser Drift.
+In a separate post I will discuss the creation of the solution itself: [Laser Drift](https://github.com/buntine/laser-drift).
 
+<a name="research"></a>
 ## Research and Experimentation
 
 The only experience my colleagues and I had with slot cars were distant childhood memories of analogue cars zipping around single-lane tracks. And so the first task at hand was to find out what a state of the art slot car set looked like in 2017.
@@ -45,6 +54,7 @@ So it was decided: **We would use an infrared transceiver to emulate the data se
 
 One additional curve ball was thrown my way when I took a closer look at the controllers we had. They were not the 38khz IR controllers I had read about but actually 2.4ghz RF! This was going to make communication a whole lot more difficult. As it turns out, the IR controllers were decommissioned in 2013 and replaced with the superior RF models. Luckily, it seemed that the new control units still supported the older controllers. So I got en ebay and bought the [older controllers](http://www.professormotor.com/v/vspfiles/photos/CAR10103-2.jpg) that I wanted.
 
+<a name="reverse"></a>
 ## Reverse Engineering
 
 The IR transceiver I purchased was the [Irdroid](http://www.irdroid.com/). Interestingly, it's handmade in Bulgaria in repurposed SD card readers. The reason I chose this device was because it's supported out of the box by the predominant infrared tool suite for Linux environments, [Lirc](http://lirc.org). LIRC is a package that allows you to decode and send infra-red signals of many (but not all) commonly used remote controls. A full introduction to it is beyond the scope of this article, but it's sufficient to just know that lirc gives you the ability to send and receive IR blasts in a Linux environment.
@@ -180,7 +190,10 @@ Below is a video of the first time I got the car to move without a physical cont
 
 {% youtube WsgaB_ByTto %}
 
-## Solution: Laser Drift
+## Laser Drift
 
-Pass.
+Wow, this post got long...
 
+I am going to leave the details of the end-result to another blog post. For now, you can check out [Laser Drift on Github](https://github.com/buntine/laser-drift) or watch the promo video I embedded at the top of this article.
+
+So, goodbye for now!
