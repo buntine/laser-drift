@@ -60,7 +60,9 @@ My elation was quickly extinguished when I realised that by "programming car spe
 
 At this point I realised that there was no official way of using a PC to control each car in realtime. And so we hit the drawing board.
 
-The first idea was to physically press the accelerator on the [controllers](http://www.carrera-toys.com/fileadmin/user_upload/products/acc/zubehoehr_42012_.jpg) using something like a [linear actuator](https://www.motiondynamics.com.au/images/magictoolbox_cache/80543c918ed05ba09145ba56f4b3651f/3/0/30444/original/3335263249/50_light_industrial_jqjh-k3.jpg). The controllers themselves would be housed in a chassis of some kind and we'd use a hobbyist microprocessor like an arduino to press each controller when desired. If you watch the first 20 seconds of [this video](https://www.youtube.com/watch?v=gnLSE44leyU) it should be obvious how this may work. This would have the benefit of not requiring us to open the hood of the Carrera set and just emulate the pressing of a thumb. But it required a whole bunch of additional hardware for each controller and some specialised skills that noone on the project professed to have. It also didn't give us the accuracy we were really after as the actuators we found were very slow.
+The first idea was to physically press the accelerator on the [controllers](http://www.carrera-toys.com/fileadmin/user_upload/products/acc/zubehoehr_42012_.jpg) using something like a [linear actuator](https://www.motiondynamics.com.au/images/magictoolbox_cache/80543c918ed05ba09145ba56f4b3651f/3/0/30444/original/3335263249/50_light_industrial_jqjh-k3.jpg). The controllers themselves would be housed in a chassis of some kind and we'd use a hobbyist microcontroller like an [Arduino](https://www.arduino.cc/) to press down on each controller when desired. If you watch the first 20 seconds of [this video](https://www.youtube.com/watch?v=gnLSE44leyU) it should be obvious how this may work.
+
+This would have the benefit of not requiring us to open the hood of the Carrera set but simply to emulate the pressing of a thumb. Although it did require a whole bunch of additional hardware for each controller and some specialised skills that no one on the project professed to have. It also didn't give us the accuracy we were really after as the actuators we found tended to *actuate* very slowly.
 
 The next idea was to reverse engineer the controllers infrared signals. We could emulate the entire array of controllers as long as we could send the right data packets at the right time. I mean, the controllers are basically like really simple TV remotes, right? This would require some hardware aswell, but atleast there would be no soldering involved.
 
@@ -68,20 +70,22 @@ I did some additional research online and I was able to find [some brialliant wo
 
 So it was decided: **We would use an infrared transceiver to emulate the data sent by the controllers to the control unit. One simple device would act as all of the controllers.**
 
-One additional curve ball was thrown my way when I took a closer look at the controllers we had. They were not the 38khz IR controllers I had read about but actually 2.4ghz RF! This was going to make communication a whole lot more difficult. As it turns out, the IR controllers were decommissioned in 2013 and replaced with the superior RF models. Luckily, it seemed that the new control units still supported the older controllers. So I got en ebay and bought the [older controllers](http://www.professormotor.com/v/vspfiles/photos/CAR10103-2.jpg) that I wanted.
+One additional curve ball was thrown my way when I took a closer look at the controllers we had. They were not the 38khz IR controllers I had read about but actually 2.4ghz RF! This was going to make communication a whole lot more difficult. As it turns out, the IR controllers were decommissioned in 2013 and replaced with the superior RF models. Luckily, it seemed that the new control units still supported the older controllers. So I got en ebay and bought the [older gear](http://www.professormotor.com/v/vspfiles/photos/CAR10103-2.jpg) that I wanted.
 
 <a name="reverse"></a>
 ## Reverse Engineering
 
-The IR transceiver I purchased was the [Irdroid](http://www.irdroid.com/). Interestingly, it's handmade in Bulgaria in repurposed SD card readers. The reason I chose this device was because it's supported out of the box by the predominant infrared tool suite for Linux environments, [Lirc](http://lirc.org). LIRC is a package that allows you to decode and send infra-red signals of many (but not all) commonly used remote controls. A full introduction to it is beyond the scope of this article, but it's sufficient to just know that lirc gives you the ability to send and receive IR blasts in a Linux environment.
+The IR transceiver I purchased was the [Irdroid](http://www.irdroid.com/). Interestingly, it's handmade in Bulgaria in repurposed SD card readers. The reason I chose this device was because it's supported out of the box by the predominant infrared tool suite for Linux environments, [Lirc](http://lirc.org). LIRC is a package that allows you to decode and send infrared signals of many (but not all) commonly used remote controls. A full introduction to it is beyond the scope of this article, but it's sufficient to just know that lirc gives you the ability to send and receive IR blasts in a Linux environment.
 
-An important part of reverse engineering is to take small steps. Try to get a general idea of how the device works before trying to reach the end goal. For me, the first port of call was to see what the information coming from the controllers looked like. To do this, I used a low-level tool that lirc provides called [mode2](https://linux.die.net/man/1/mode2) that listens for raw IR data and prints it to `STDOUT`. Let me explain what IR data looks like.
+An important part of reverse engineering is to take small steps. Try to get a general idea of how the device works before trying to reach the end goal. For me, the first port of call was to see what the information coming from the controllers looked like. To do this, I used a low-level tool that lirc provides called [mode2](https://linux.die.net/man/1/mode2). Mode2 simply listens for raw IR data and prints it to `STDOUT`.
 
-Infrared devices typically encode their message to the receiver via a method called Pulse Code Modulation (PCM) in which an IR-emitting LED is switched on and off rapidly. When the transmitter is "off", we call it a space. And when the transmitter is "on", we call it a pulse. There are a few common methods for encoding binary into pulses and spaces, but all involve transitioning between pulses and spaces.
+Let me explain what IR data looks like.
 
-In my case, I expected to see a random looking series of pulses and spaces being printed to `STDOUT`. But, I got nothing. No matter what I did, I could not get any output from the controller. I spent the next hour troubleshooting why the Carrera control unit could pick up on the IR data but I couldn't. It wasn't until I pointed my IR receiver a the control unit itself that I realised there was more to the story.
+Infrared devices typically encode their message to the receiver via a method called Pulse Code Modulation (PCM) in which an IR-emitting LED is switched on and off rapidly. When the transmitter is "off", we call it a space. And when the transmitter is "on", we call it a pulse. There are a few common methods for encoding binary into pulses and spaces, but all involve transitioning between said pulses and spaces.
 
-The control unit (well, technically the IR receiver on the unit) was actually sending out the following signals every ~70 milliseconds:
+In my case, I expected to see a random looking series of pulses and spaces being printed to `STDOUT`. But I got nothing. No matter what I did, I could not get any output from the controller. I spent the next hour troubleshooting why the Carrera control unit could pick up on the IR data but I couldn't. It wasn't until I pointed my IR transceiver at the *control unit itself* that I realised there was more to the story.
+
+The control unit (well, technically the IR device on the unit) was actually sending out the following signals every ~70 milliseconds:
 
 ```
 pulse 800
@@ -91,7 +95,7 @@ pulse 550
 
 The numbers are microseconds. What we are seeing here is a pulse of 800μs, a space of 700μs and then a pulse of 550μs. This was repeated ad infinitum.
 
-As it turns out, the controllers only respond when they are instructed to by the control unit. Pressing the button does not actually cause an IR transmission. It just updates some state on the microcontroller in the controller itself. This is important for synchronising the controllers so that their transmissions do not get tangled on the receiving end. 
+As it turns out, the controllers only respond when they are instructed to by the control unit. Pressing the button does not actually cause an IR transmission. It just updates some state on the microcontroller in the controller itself. This, I assume, is important for synchronising the controllers so that their transmissions do not get tangled on the receiving end.
 
 Cool. So the next thing I did was transmit the syncing blast from my transceiver to the controller and see what it returned. This is what I got back:
 
@@ -117,15 +121,19 @@ At the suggestion of a friend, I wrote a little script to visualise this with a 
 
 ![Packet 1 visualised](https://thepracticaldev.s3.amazonaws.com/i/ddgfz1li00l8cigbzutn.png)
 
-I performed this test a bunch of times. I could see that the transmission repeated every ~60 ms. And it always started with a pulse of 300 followed by a space of either 750 or 1000. This was definitely the start bit, which told the control unit that the blast was coming from a controller. And following the start bit was a series of pulses and spaces that were always either `250`μs or `500`μs.
+I performed this test a bunch of times. I could see that the transmission repeated every ~60 ms. And it always started with a pulse of 300 followed by a space of either 750 or 1000. This was definitely the start bit, which told the control unit that the blast was coming from a controller and that the rest of the transmission was the payload.
 
-From consulting the work of Stephan Heß I knew that Carrera controllers used [Manchester Coding](https://en.wikipedia.org/wiki/Manchester_code) to encode their data packets. In Manchester Coding, a bit is represented as a transition from either low-to-high or high-to-low. Specifically, `1` is encoded as a pulse of **N**μs followed by a space of **N**μs. And `0` is encoded as a space of **N**μs followed by a pulse of **N**μs.
+Following the start bit was a series of pulses and spaces that were always either `250`μs or `500`μs.
 
-As we can see, in our case `N = 250`. So each bit required exactly 500μs. Summing the numbers together (minus the start bit) we get `4000`. And `4000 / 500 = 8`. So the data packet consisted of a start bit followed by one byte of data.
+After some additional experimentation and research I presumed Carrera were using [Manchester Coding](https://en.wikipedia.org/wiki/Manchester_code) to encode their data packets. In Manchester Coding, a bit is represented as a transition from either low-to-high or high-to-low. Specifically, `1` is encoded as a pulse of **N**μs followed by a space of **N**μs. And `0` is encoded as a space of **N**μs followed by a pulse of **N**μs.
 
-Again, consulting the work of Stephan Heß, which by this point had saved me many hours, I was able to confirm the structure of the data packet sent by each controller. Each controller sent the start bit, followed by two bits representing the player, four bits for the speed and a bit to indicate whether the lane-change button was pressed. There was also a trailing bit that seemed to be used to represent additional players. I assume it was added to the end for backwards compatibility with older models.
+As we can see, in our case `N = 250`. So each bit required exactly 500μs. Summing the numbers together (minus the start bit) we get `4000`. And `4000 / 500 = 8`. So the data packet consisted of a start bit followed by 8 bits (one byte) of data.
 
-I've drawn it below.
+Consulting the work of Stephan Heß, which by this point had saved me many hours, I was able to confirm the structure of the data packet sent by each controller. Each controller sent the start bit, followed by **two bits** representing the player, **four bits** for the speed and **one bit** to indicate whether the lane-change button was pressed. Wait - that's only seven bits!?
+
+As it turns out, there was also a trailing bit that seemed to be used to represent additional players. I assume it was added to the end for backwards compatibility with older models. This also explained why there was no end bit on the data word - it allowed for future expansion of the payload whilst maintaining backwards compatibility.
+
+I've drawn the payload contents below.
 
 ![Carrera controller protocol](https://thepracticaldev.s3.amazonaws.com/i/nnkfmmv1hk0m2dltp0y8.jpg)
 
