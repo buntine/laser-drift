@@ -2,10 +2,11 @@
 title: "Laser Drift: Reverse engineering slot cars for fun and (no) profit!"
 published: false
 description: An in-depth look at the reverse engineering of a popular Slot Car set.
+cover_image: https://thepracticaldev.s3.amazonaws.com/i/lj3qca6t9qn5vadkma34.jpg
 tags: reverse-engineering, hacking, python, fun
 ---
 
-**In this blog series I discuss the creation of [Laser Drift](https://github.com/buntine/laser-drift), a collection of tools that allow you to remotely control your Carrera Digital 132/124 race track by emulating the infrared wireless controllers for between one and four players simultaneously.**
+**In this blog series I discuss the creation of [Laser Drift](https://github.com/buntine/laser-drift), a system that allows you to remotely control your Carrera Digital slot cars by emulating the infrared wireless controllers for between one and four players simultaneously.**
 
 **Feel free to take a look at my promo video before you read.**
 
@@ -17,14 +18,21 @@ A couple of months ago I was in a brainstorming meeting with the Creative Direct
 
 These open briefs are generally great, but it can be difficult to come up with a viable idea that satisfies everyones concept of what constitutes awesomeness and (God forbid) fits within the proposed budget.
 
-We eventually settled upon the idea of **brain powered [slot car](https://en.wikipedia.org/wiki/Slot_car) racing**, in which a user would think certain thoughts like "push" in order to make the cars move. So, in a nutshell, two to four players would race against each other and the first player to *n* laps would win. This idea satisfied a few pre-requisites - most importantly it would allow users to interact with the physical world. The client, perhaps correctly, felt that it would be more impressive if the BCI device was able to move physical objects opposed to digital ones.
+We eventually settled upon the idea of **brain powered [slot car](https://en.wikipedia.org/wiki/Slot_car) racing**, in which a user would think certain thoughts like "push" in order to make the cars move. So, in a nutshell, two to four players would race against each other and the first player to *n* laps would win. We felt this would work well because (as those of us old enough to remember already know) turning is automatic in slot car systems. Users had only to move forward and the rest would be be taken care of.
 
-To me, this idea actually involved two separate projects: 
+This idea also satisfied a few other prerequisites - most importantly it would allow users to interact with the physical world. The client, perhaps correctly, felt that it would be more impressive if the BCI device was able to move physical objects opposed to digital ones.
 
-  - BCI -> PC: Software to pick up on mental commands like "push"
-  - PC -> Slot Cars: Software to accurately control up to four players on a slot car set
+To me, this idea actually involved two separate projects. First: 
 
-In this post I will discuss the latter as it is by far the most interesting and challenging of the two. The project manifested itself in three phases. In this post I will discuss the first two phases:
+  - **PC -> Slot Cars**: We needed to create software to accurately control up to four players on a slot car set using simple, language-agnostic commands
+
+And second:
+
+  - **BCI -> PC**: We needed to create software to listen for mental commands like "push" and "pull" and then translate them into those simple commands I mentioned above
+
+In this series I will discuss the former as it is by far the most interesting and challenging of the two - even though "mind control" may sound cooler in a press release.
+
+The project manifested itself in three phases. In this post I will discuss the first two phases:
 
   - [Research and Experimentation](#research)
   - [Reverse Engineering](#reverse)
@@ -36,11 +44,19 @@ In a separate post I will discuss the creation of the solution itself: [Laser Dr
 
 The only experience my colleagues and I had with slot cars were distant childhood memories of analogue cars zipping around single-lane tracks. And so the first task at hand was to find out what a state of the art slot car set looked like in 2017.
 
-The first thing to decide was which slot car manufacturer we would go with. As it turns out, there are two main players in the slot car world: [Scalextric](https://www.scalextric.com/uk-en/) and [Carrera](http://www.carrera-toys.com/en/). The general sentiment among enthusiasts is that Scalextric is for the older, hobbyist demographic whilst Carrera is for the younger crowd who just want to have some fun. But both options are of a very high quality.
+Wow! They've really [come a long way](https://www.youtube.com/watch?v=jbQQT5sxGus).
 
-After some looking around, I found that Carrera offered a bluetooth interface called the [AppConnect](http://www.carrera-toys.com/en/products/digital-132/accessories/appconnect-538/) that would allow one to program car speeds, fuel levels (yes, that's a thing now) and various other tasks. One Thomas Kemmer had also released [Python bindings](https://github.com/tkem/carreralib) into the underlying protocol, whch meant I would easily whip up a python program to control the cars. I was starting to think this whole thing may be much easier than I initially thought...
+In the old days, each car needed to occupy it's own lane. And if any two cars got in the same lane, they would always travel at exactly the same speed. They were fun, but relatively monotonous toys.
 
-Oh, ignorance is bliss. My elation was quickly extinguished when I realised that by "programming car speeds", Carrera had meant that the bluetooth interface can be used to **pre-program** cars with individual top speeds before a race. It's of no use *during* a race! Alas, we still ordered a new (and pretty damned expensive!) [Carrera Digital 132 GT Championship Wireless+](http://www.carrera-toys.com/en/products/digital-132/sets/gt-championship-1300/years-2016/) set and the bluebooth adapter regardless. This particular set came with wireless controllers, which communicated with the control unit on the track via infrared (alteast, that is what I had read). 
+But that was the past! For in about 2004, the major manufacturers started introducing digital systems in which each car could be uniquely identified (even if they occupied the same lane). So now players can freely change lanes, simulate oil spills, have pit stops, configure braking performance and even represent real-world concepts like fuel levels and tyre blowouts. All of this was going to allow for a whole new dimension of *badassery* in the end result.
+
+The next point of call was to decide was which slot car manufacturer we would go with. As it turns out, there are two main players in the slot car world: [Scalextric](https://www.scalextric.com/uk-en/) and [Carrera](http://www.carrera-toys.com/en/). The general sentiment among enthusiasts is that Scalextric is for the older, hobbyist demographic whilst Carrera is for the younger crowd who just want to have some fun. But both options are of a very high quality.
+
+After some looking around, I found that Carrera offered a bluetooth interface called the [AppConnect](http://www.carrera-toys.com/en/products/digital-132/accessories/appconnect-538/) that would allow one to program car speeds, set fuel levels and perform various other tasks. One Thomas Kemmer had also released [Python bindings](https://github.com/tkem/carreralib) into the underlying protocol, whch meant I could easily whip up a python program to control the cars. I was starting to think this whole thing may be much easier than I initially thought...
+
+Oh, ignorance is bliss.
+
+My elation was quickly extinguished when I realised that by "programming car speeds", Carrera had meant that the bluetooth interface can be used to **pre-program** cars with individual top speeds before a race. It's of no use *during* a race! Alas, we still ordered a new (and pretty damned expensive!) [Carrera Digital 132 GT Championship Wireless+](http://www.carrera-toys.com/en/products/digital-132/sets/gt-championship-1300/years-2016/) set and the bluebooth adapter regardless. This particular set came with wireless controllers, which communicated with the control unit on the track via infrared (atleast, that is what I had read on the official forums). 
 
 At this point I realised that there was no official way of using a PC to control each car in realtime. And so we hit the drawing board.
 
