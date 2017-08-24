@@ -111,7 +111,7 @@ Again, consulting the work of Stephan Heß, which by this point had saved me man
 
 I've drawn it below.
 
-PICTURE
+![Carrera controller protocol](https://thepracticaldev.s3.amazonaws.com/i/nnkfmmv1hk0m2dltp0y8.jpg)
 
 As an example, let's suppose we were player #3 travelling at speed 7 with the lane change button pressed. Our 8 bits would look something like this:
 
@@ -178,7 +178,11 @@ pulse 250
 
 And we're done!
 
-Visualised, the data packet is very similar to the one I showed above. You should be able to see the difference between the 250μs and 500μs bursts.
+Here is another representation:
+
+![Carrera controller protocol](https://thepracticaldev.s3.amazonaws.com/i/fo2sparatgw0ihs701k4.jpg)
+
+And then shown as a step graph, the data packet is very similar to the one I showed above. You should be able to see the difference between the 250μs and 500μs bursts.
 
 ![Packet 2 visualised](https://thepracticaldev.s3.amazonaws.com/i/2inkwvh6t99vmbj6hruv.png)
 
