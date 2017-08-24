@@ -1,3 +1,10 @@
+---
+title: Reverse engineering slot cars for fun and profit
+published: false
+description: 
+tags: 
+---
+
 A couple of months ago I was in a brainstorming meeting with the Creative Director, the Head of Strategy and an assortment of other tech people. This is a volatile melting pot of skills that in the past has produced many amazing things (and the odd Frankenstein). Our client had tasked us with "doing something awesome with one of [those BCI devices]()". For those unaware, **B**rain-**C**omputer **I**nterface devices measure electrical activity in the brain and provide an SDK for performing computations based on simple thoughts, emotions and physical gestures.
 
 These open briefs are generally great, but it can be difficult to come up with a viable idea that satisfies everyones concept of what constitutes awesomeness and (God forbid) fits within the proposed budget.
@@ -81,13 +88,15 @@ pulse 250
 
 At the suggestion of a friend, I wrote a little script to visualise this with a step graph where a pulse is high and a space is low.
 
+![Packet 1 visualised](https://thepracticaldev.s3.amazonaws.com/i/ddgfz1li00l8cigbzutn.png)
+
 I performed this test a bunch of times. I could see that the transmission repeated every ~60 ms. And it always started with a pulse of 300 followed by a space of either 750 or 1000. This was definitely the start bit, which told the control unit that the blast was coming from a controller. And following the start bit was a series of pulses and spaces that were always either `250`μs or `500`μs.
 
 From consulting the work of Stephan Heß I knew that Carrera controllers used [Manchester Coding]() to encode their data packets. In Manchester Coding, a bit is represented as a transition from either low-to-high or high-to-low. Specifically, `1` is encoded as a pulse of **N**μs followed by a space of **N**μs. And `0` is encoded as a space of **N**μs followed by a pulse of **N**μs.
 
 As we can see, in our case `N = 250`. So each bit required exactly 500μs. Summing the numbers together (minus the start bit) we get `4000`. And `4000 / 500 = 8`. So the data packet consisted of a start bit followed by one byte of data.
 
-Again, consulting the work of Stephan Heß, which by this point had saved me many hours, I was able to confirm the structure of the data packet sent by each controller. Each controller sent the start bit, followed by two bits representing the player, four bits for the speed and a bit to indicate whether the lane-change button was pressed. There was also a trailing bit that seemed to be used to represent more players. I assume it was added to the end for backwards compatibility with older models.
+Again, consulting the work of Stephan Heß, which by this point had saved me many hours, I was able to confirm the structure of the data packet sent by each controller. Each controller sent the start bit, followed by two bits representing the player, four bits for the speed and a bit to indicate whether the lane-change button was pressed. There was also a trailing bit that seemed to be used to represent additional players. I assume it was added to the end for backwards compatibility with older models.
 
 I've visualised it below.
 
@@ -156,10 +165,21 @@ space 500 # 0
 pulse 250
 ```
 
-And that's it. Visualised, the data packet is very similar to the one I showed above. You should be able to see the difference between the 250μs and 500μs bursts.
+And we're done!
 
-PICTURE
+Visualised, the data packet is very similar to the one I showed above. You should be able to see the difference between the 250μs and 500μs bursts.
+
+![Packet 2 visualised](https://thepracticaldev.s3.amazonaws.com/i/2inkwvh6t99vmbj6hruv.png)
+
+And with this, the reverse engineering project was complete. From here I was able to use lirc to listen for the syncing blast from the Carrera control unit and respond with some hardcoded data packet.
+
+After I solved some minor timing issues I was elated when **I saw the car move**! It was proof enough for me, at the very least, that the idea was not totally bonkers.
+
+Below is a video of the first time I got the car to move without a physical controller.
+
+{% youtube WsgaB_ByTto %}
 
 ## Solution: Laser Drift
 
 Pass.
+
