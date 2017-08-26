@@ -25,14 +25,14 @@ class TCPHandler(socketserver.BaseRequestHandler):
                 message = f(match.groupdict())
 
                 if message:
-                    self.__send(message)
+                    self.__send(command, message)
 
                 return
 
         logging.warning("Unknown command: %s", command)
         self.request.sendall(b"ERR")
 
-    def __send(self, message: dict):
+    def __send(self, command: str, message: dict):
         """Send command to race process for consumption."""
 
         self.server.q.put(message)
@@ -48,7 +48,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
         if data:
             state = self.server.pipe.recv()
-            logging.info("Server accepted: %s" % command)
+            logging.info("Server accepted: state")
             self.request.sendall(b"test")
         else:
             self.request.sendall(b"ERR")
