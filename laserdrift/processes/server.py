@@ -50,7 +50,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
             resp = "%s\n%s" % (
               "active" if state["active"] else "inactive",
-              "\n".join(map(lambda p: p.key(), state["players"])))
+              "\n".join(map(lambda p: p.key(), state["players"].values())))
 
             self.request.sendall(bytes(resp, "utf-8"))
         else:

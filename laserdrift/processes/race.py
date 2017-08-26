@@ -4,6 +4,7 @@ import logging
 import lirc
 import re
 from multiprocessing import Process, Queue
+from collections import OrderedDict
 from laserdrift.processes.player import Player
 
 class Race(Process):
@@ -35,7 +36,7 @@ class Race(Process):
                 if self.active and self.__find_sync():
                     schedule = sched.scheduler(time.time, time.sleep)
 
-                    for p in self.players:
+                    for _, p in self.players.items():
                         if p.moving():
                             schedule.enter(Race.DELAY * p.nth, 1, self.__send, (p,))
 
@@ -77,7 +78,7 @@ class Race(Process):
         else:
             data = msg["data"]
             value = data["value"]
-            p = self.players[data["player"]] if len(self.players) > data["player"] else None
+            p = self.players.get(data["player"])
 
             if p:
                 if p.execute(command, value):
@@ -88,10 +89,7 @@ class Race(Process):
                 logging.warning("Cannot set %s for player %d" % (command, data["player"]))
 
     def __make_players(self, players: [Player]) -> hash:
-        p = players.copy()
-        p.sort()
-
-        return [Player(n) for n in p]
+        return OrderedDict(map(lambda n: (n, Player(n)), players))
 
     def __activate(self, command: str):
         self.active = (command == "start")
