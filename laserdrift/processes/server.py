@@ -1,7 +1,7 @@
 import re
 import logging
 import socketserver
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Connection
 
 class TCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
@@ -12,6 +12,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
         commands = {
             r"^start$": self.__start,
             r"^stop$": self.__stop,
+            r"^state$": self.__state,
             r"^p(?P<player>\d)s(?P<speed>\d{1,2})$": self.__speed,
             r"^p(?P<player>\d)s(?P<op>[+-])$": self.__speedinc,
             r"^p(?P<player>\d)l(?P<status>[01])$": self.__lanechange
@@ -23,13 +24,31 @@ class TCPHandler(socketserver.BaseRequestHandler):
             if match:
                 message = f(match.groupdict())
 
-                self.server.q.put(message)
-                self.request.sendall(b"OK")
-                logging.info("Server accepted: %s" % command)
+                if message:
+                    self.__send(message)
+
                 return
 
         logging.warning("Unknown command: %s", command)
         self.request.sendall(b"ERR")
+
+    def __send(self, message: dict):
+        """Send command to race process for consumption."""
+
+        self.server.q.put(message)
+        self.request.sendall(b"OK")
+        logging.info("Server accepted: %s" % command)
+
+    def __state(self, _):
+        """Asks race process for current state and returns to requester."""
+
+        self.server.q.put({"message": "state", "data": {}})
+
+        data = self.server.pipe.poll(1)
+
+        if data:
+            state = self.server.pipe.recv()
+            self.request.sendall(b"test")
 
     def __start(self, _) -> hash:
         return {"message": "start", "data": {}}
@@ -65,9 +84,10 @@ class TCPHandler(socketserver.BaseRequestHandler):
         }
 
 class Server(Process):
-    def __init__(self, queue: Queue, port: int, host: str):
+    def __init__(self, queue: Queue, pipe: Connection, port: int, host: str):
         Process.__init__(self)
         self.q = queue
+        self.pipe = pipe
         self.port = port
         self.host = host
 
@@ -78,6 +98,7 @@ class Server(Process):
         try:
             server = socketserver.TCPServer((self.host, self.port), TCPHandler)
             server.q = self.q
+            server.pipe = self.pipe
 
             logging.info("TCP server process initialized")
 

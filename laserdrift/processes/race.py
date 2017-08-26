@@ -3,7 +3,7 @@ import time
 import logging
 import lirc
 import re
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Connection
 from laserdrift.processes.player import Player
 
 class Race(Process):
@@ -15,9 +15,10 @@ class Race(Process):
     WRITE_TIMEOUT = 0.028
     READ_TIMEOUT = 0.8
 
-    def __init__(self, q: Queue, players: [int], remote: str, socket: str):
+    def __init__(self, q: Queue, pipe: Connection, players: [int], remote: str, socket: str):
         Process.__init__(self)
         self.q = q
+        self.pipe = pipe
         self.remote = remote
         self.socket = socket
         self.conn = None
@@ -70,6 +71,8 @@ class Race(Process):
 
         if re.match(r"start|stop", command):
             self.__activate(command)
+        elif re.match(r"state", command):
+            self.pipe.send("test")
         else:
             data = msg["data"]
             value = data["value"]

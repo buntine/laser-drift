@@ -1,7 +1,6 @@
 ![Laser Drift](/dist/images/logo.jpg?raw=true "Laser Drift")
 
-# Laser Drift
-## version 0.1
+# Laser Drift (v0.1.0)
 
 Laser Drift is a system that allows you to remotely control your [Carrera Digital 132/124](http://www.carrera-toys.com/en/) race track by emulating the infrared wireless controllers for between one and four players simultaneously.
 
