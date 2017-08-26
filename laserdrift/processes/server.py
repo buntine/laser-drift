@@ -1,7 +1,7 @@
 import re
 import logging
 import socketserver
-from multiprocessing import Process, Queue, Connection
+from multiprocessing import Process, Queue
 
 class TCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
@@ -48,7 +48,10 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
         if data:
             state = self.server.pipe.recv()
+            logging.info("Server accepted: %s" % command)
             self.request.sendall(b"test")
+        else:
+            self.request.sendall(b"ERR")
 
     def __start(self, _) -> hash:
         return {"message": "start", "data": {}}
@@ -84,7 +87,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
         }
 
 class Server(Process):
-    def __init__(self, queue: Queue, pipe: Connection, port: int, host: str):
+    def __init__(self, queue: Queue, pipe, port: int, host: str):
         Process.__init__(self)
         self.q = queue
         self.pipe = pipe
