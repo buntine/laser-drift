@@ -72,7 +72,8 @@ class Race(Process):
         if re.match(r"start|stop", command):
             self.__activate(command)
         elif re.match(r"state", command):
-            self.pipe.send("test")
+            self.pipe.send({"active": self.active,
+                            "players": self.players})
         else:
             data = msg["data"]
             value = data["value"]

@@ -47,9 +47,14 @@ class TCPHandler(socketserver.BaseRequestHandler):
         data = self.server.pipe.poll(1)
 
         if data:
-            state = self.server.pipe.recv()
             logging.info("Server accepted: state")
-            self.request.sendall(b"test")
+            state = self.server.pipe.recv()
+
+            resp = "%s\n%s" % (
+              "active" if state.active else "inactive",
+              "\n".join(map(lambda p: p.key(), state.players)))
+
+            self.request.sendall(bytes(resp, "utf-8"))
         else:
             self.request.sendall(b"ERR")
 
