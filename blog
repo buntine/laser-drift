@@ -8,7 +8,7 @@ tags: reverse-engineering, hacking, python, fun
 
 **In this blog series I discuss the creation of [Laser Drift](https://github.com/buntine/laser-drift), a system that allows you to remotely control your Carrera Digital slot cars by emulating the infrared wireless controllers for between one and four players simultaneously.**
 
-**Feel free to take a look at my promo video before you read.**
+**Feel free to take a look at my demonstration video or the [Github repo](https://github.com/buntine/laser-drift) before you read.**
 
 {% youtube WsgaB_ByTto %}
 
@@ -117,7 +117,7 @@ space 250
 pulse 250
 ```
 
-At the suggestion of a friend, I wrote a little script to visualise this with a step graph where a pulse is high and a space is low.
+At the suggestion of [a friend](https://dtcristo.com/), I wrote a little script to visualise this with a step graph where a pulse is high and a space is low.
 
 ![Packet 1 visualised](https://thepracticaldev.s3.amazonaws.com/i/ddgfz1li00l8cigbzutn.png)
 
@@ -127,7 +127,7 @@ Following the start bit was a series of pulses and spaces that were always eithe
 
 After some additional experimentation and research I presumed Carrera were using [Manchester Coding](https://en.wikipedia.org/wiki/Manchester_code) to encode their data packets. In Manchester Coding, a bit is represented as a transition from either low-to-high or high-to-low. Specifically, `1` is encoded as a pulse of **N**μs followed by a space of **N**μs. And `0` is encoded as a space of **N**μs followed by a pulse of **N**μs.
 
-As we can see, in our case `N = 250`. So each bit required exactly 500μs. Summing the numbers together (minus the start bit) we get `4000`. And `4000 / 500 = 8`. So the data packet consisted of a start bit followed by 8 bits (one byte) of data.
+As we can see, in our case `N = 250`. So each bit required exactly 500μs. Summing the numbers together (minus the start bit) we get `4000`. And `4000 / 500 = 8`. So the data packet consisted of a start bit followed by eight bits (one byte) of data.
 
 Consulting the work of Stephan Heß, which by this point had saved me many hours, I was able to confirm the structure of the data packet sent by each controller. Each controller sent the start bit, followed by **two bits** representing the player, **four bits** for the speed and **one bit** to indicate whether the lane-change button was pressed. Wait - that's only seven bits!?
 
@@ -143,14 +143,14 @@ As an example, let's suppose we were player #3 travelling at speed 7 with the la
 10011110
 ```
 
-To encode these bits into pulses and spaces we can first add the start bit:
+To encode these bits into pulses and spaces using Manchested Coding we can first add the *start bit*:
 
 ```
 pulse 300
 space 750
 ```
 
-And then we start adding in each bit. Remember that bits in Manchested Coding are represented as a transition. So let's add the 1 (a pulse followed by space):
+And then we start adding in each bit one by one. Remember that bits in Manchested Coding are represented as a transition. So let's add the 1 (a pulse followed by space):
 
 ```
 pulse 300
@@ -180,7 +180,7 @@ space 500
 pulse 250
 ```
 
-Cool. Every time we see a 0->1 or a 1->0, we are going to merge one end with the other to produce a pulse or a space of 500μs. Now let's add in the rest of the bits:
+Cool. Every time we see a `0->1` or a `1->0`, we are going to merge one end with the other to produce a pulse or a space of 500μs. Now let's add in the rest of the bits:
 
 ```
 pulse 300
@@ -206,7 +206,7 @@ Here is another representation:
 
 ![Carrera controller protocol](https://thepracticaldev.s3.amazonaws.com/i/fo2sparatgw0ihs701k4.jpg)
 
-And then shown as a step graph, the data packet is very similar to the one I showed above. You should be able to see the difference between the 250μs and 500μs bursts.
+And when we visualise it as a step graph, the data packet is very similar to the one I showed above. You should be able to see the difference between the 250μs and 500μs bursts.
 
 ![Packet 2 visualised](https://thepracticaldev.s3.amazonaws.com/i/2inkwvh6t99vmbj6hruv.png)
 
@@ -214,7 +214,7 @@ And with this, the reverse engineering project was complete. From here I was abl
 
 After I solved some minor timing issues I was elated when **I saw the car move**! It was proof enough for me, at the very least, that the idea was not totally bonkers.
 
-Below is a video of the first time I got the car to move without a physical controller.
+Below is a video of the first time I got the car to move without a physical controller. In this video I am ignoring all syncing efforts from the IR tower on the Carrera set. I am just blasting the same message over and over and hoping the timing is correct. This explains why the car only moves in little bursts.
 
 {% youtube WsgaB_ByTto %}
 
@@ -222,6 +222,4 @@ Below is a video of the first time I got the car to move without a physical cont
 
 Wow, this post got long...
 
-I am going to leave the details of the end-result to another blog post. For now, you can check out [Laser Drift on Github](https://github.com/buntine/laser-drift) or watch the promo video I embedded at the top of this article.
-
-So, goodbye for now!
+I am going to leave the details of the end-result to another blog post. For now, you can check out [Laser Drift on Github](https://github.com/buntine/laser-drift) or watch the demonstration video I embedded at the top of this article.
