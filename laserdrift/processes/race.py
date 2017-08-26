@@ -35,7 +35,7 @@ class Race(Process):
                 if self.active and self.__find_sync():
                     schedule = sched.scheduler(time.time, time.sleep)
 
-                    for _, p in self.players.items():
+                    for p in self.players:
                         if p.moving():
                             schedule.enter(Race.DELAY * p.nth, 1, self.__send, (p,))
 
@@ -77,7 +77,7 @@ class Race(Process):
         else:
             data = msg["data"]
             value = data["value"]
-            p = self.players.get(data["player"])
+            p = self.players[data["player"]] if len(self.players) > data["player"] else None
 
             if p:
                 if p.execute(command, value):
@@ -91,7 +91,7 @@ class Race(Process):
         p = players.copy()
         p.sort()
 
-        return {n: Player(n) for n in players}
+        return [Player(n) for n in p]
 
     def __activate(self, command: str):
         self.active = (command == "start")

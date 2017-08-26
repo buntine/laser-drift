@@ -44,15 +44,13 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
         self.server.q.put({"message": "state", "data": {}})
 
-        data = self.server.pipe.poll(1)
-
-        if data:
+        if self.server.pipe.poll(1):
             logging.info("Server accepted: state")
             state = self.server.pipe.recv()
 
             resp = "%s\n%s" % (
-              "active" if state.active else "inactive",
-              "\n".join(map(lambda p: p.key(), state.players)))
+              "active" if state["active"] else "inactive",
+              "\n".join(map(lambda p: p.key(), state["players"])))
 
             self.request.sendall(bytes(resp, "utf-8"))
         else:
