@@ -1,8 +1,8 @@
 - Video
 - Publish blog and add link to README and embed video link
-- Tests for TCP state command
 - If player 1 and 2. If p1 set to s0, p2 lags a lot. Why?
 
+**- Tests for TCP state command
 **- TCP command to ask for current state for race and player.
 **- Timing important - should be ordered: 0, 4, 1, 5, 2, 3 (Answer: Only necessary if using player 4 and 5)
 **- Player 0 not transmitting at all... (is there even a player 0 or only p1..6?)

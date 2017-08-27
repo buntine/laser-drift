@@ -33,7 +33,7 @@ def background(stdscr):
     stdscr.bkgdset(" ", curses.color_pair(17))
 
 def block(stdscr, x, y, n, speed):
-    """Render a block to the window..."""
+    """Render a block to the window."""
     for l in range(0, 3):
         if n == speed and l == 1:
             content = str(n).zfill(2)
@@ -92,7 +92,23 @@ def send(sock, c, attempt=1):
             sock = connect()
             return send(sock, c, attempt+1)
 
-    return sock
+    return (resp, sock)
+
+def reify(s):
+    state = s.split("\n")
+
+    if len(state) < 2:
+        return
+
+    state["active"] = (state[0] == "active")
+    
+    match = re.match(r"p%ds(?<speed>\d{1,2})l(?<lanechange>\d)" % player, state)
+
+    if match:
+        details = match.groupdict()
+
+        state["speed"] = details["speed"]
+        state["lanechange"] = details["lanechange"]
 
 def command(stub):
     return "p%d%s" % (player, stub)
@@ -152,6 +168,11 @@ def main(stdscr):
     try:
         sock = connect()
 
+        # Reify GUI with current state (if any).
+        resp, sock = send(sock, "state")
+        reify(resp)
+        render(stdscr, x, y, state)
+
         while True:
             ch = stdscr.getch()
 
@@ -162,7 +183,7 @@ def main(stdscr):
                 cmd = f(ch)
 
                 if cmd:
-                    sock = send(sock, cmd)
+                    _, sock = send(sock, cmd)
                     render(stdscr, x, y, state)
                     break
     finally:
