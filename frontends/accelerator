@@ -3,6 +3,7 @@
 import curses
 import socket
 import sys
+import re
 
 """A curses GUI for controlling and vizualizing a slotcar via Laser Drift."""
 
@@ -95,20 +96,20 @@ def send(sock, c, attempt=1):
     return (resp, sock)
 
 def reify(s):
-    state = s.split("\n")
+    game = s.decode("utf-8").split("\n")
 
-    if len(state) < 2:
+    if len(game) < 2:
         return
 
-    state["active"] = (state[0] == "active")
+    state["started"] = (game[0] == "active")
     
-    match = re.match(r"p%ds(?<speed>\d{1,2})l(?<lanechange>\d)" % player, state)
+    match = re.match(r".+P%dS(?P<speed>\d{1,2})L(?P<lanechange>\d).+" % player, "".join(game))
 
     if match:
         details = match.groupdict()
 
-        state["speed"] = details["speed"]
-        state["lanechange"] = details["lanechange"]
+        state["speed"] = int(details["speed"])
+        state["lanechange"] = int(details["lanechange"])
 
 def command(stub):
     return "p%d%s" % (player, stub)
