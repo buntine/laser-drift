@@ -45,6 +45,14 @@ The commands are:
   - **pPs+**: Increment player *P*'s speed by 1 (if possible)
   - **pPs-**: Decrement player *P*'s speed by 1 (if possible)
   - **pPlL**: Set player *P*'s lane change status to *L*
+  - **state**: Request full game state. The response is UTF8 encoded bytes in the format:
+    - ```
+      active|inactive
+      p0sSlL
+      p1sSlL
+      p2sSlL
+      p3sSlL
+      ```
 
 So, for example, setting player #1 to speed 8 is represented as `p0s8` and turning on lane change for player #3 is represented as `p2l1`.
 
