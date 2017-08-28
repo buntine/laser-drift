@@ -10,7 +10,7 @@ Each car that is being controlled by a Laser Drift server is uniquely accessible
 
 This system acts as a low level interface into a Carrera Digital slot car set and is intended to be used to build higher lever applications. See the [frontends](#user-content-frontends) section for some examples of things you can do with this system. 
 
-I have some additional details and a technical explanation of the reverse engineering process available [at my blog](http://bunts.io/).
+I have some additional details and a technical explanation of the reverse engineering process available [at my blog](https://dev.to/buntine/laser-drift-reverse-engineering-slot-cars-for-fun-and-no-profit).
 
 ## Demonstration
 
