@@ -12,6 +12,10 @@ This system acts as a low level interface into a Carrera Digital slot car set an
 
 I have some additional details and a technical explanation of the reverse engineering process available [at my blog](http://bunts.io/).
 
+## Demonstration
+
+I've uploaded a [small video to Youtube](https://youtu.be/VmsQ4c20vLg) that gives a very basic demo of the `accelerator` frontend, which is a simple [ncurses](https://en.wikipedia.org/wiki/Ncurses) GUI for controlling a slot car in the terminal.
+
 ## How it works
 
 The main Laser Drift system is comprised of two processes:
@@ -56,7 +60,7 @@ The commands are:
 
 So, for example, setting player #1 to speed 8 is represented as `p0s8` and turning on lane change for player #3 is represented as `p2l1`.
 
-Note, the infrared packets are physically sent and received by [lirc](http://www.lirc.org/), which must be running in order for Laser Drift to successfully initialize. The full list of software and hardware dependencies is listed in the [What you need](#user-content-what-you-need) section below.
+**Note**: the infrared packets are physically sent and received by [lirc](http://www.lirc.org/), which must be running in order for Laser Drift to successfully initialize. The full list of software and hardware dependencies is listed in the [What you need](#user-content-what-you-need) section below.
 
 ## Frontends
 
