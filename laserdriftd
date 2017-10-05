@@ -40,7 +40,7 @@ if not opts.players:
     sys.exit(1)
 
 if opts.daemon and not opts.logfile:
-    logging.error("Log file must be specified when running as a daemon")
+    logging.error("Log file must be specified when running as a daemon.")
     sys.exit(1)
 
 opts.players.sort()
